@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>MustComb - Demo</title>
+
+    <link rel="stylesheet" href="./css/chico-min-0.11.1.css">
+    <link rel="stylesheet" href="./css/chico-mesh.css">
+    <link rel="stylesheet" href="./css/qunit.css">
+
+    <script type="text/javascript" src="./js/jquery.js" ></script>
+    <script type="text/javascript" src="./js/chico-min-0.11.1.js" ></script>
+    <script type="text/javascript" src="./js/mustache-0.5.2-dev.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb.js" ></script>
+    <script type="text/javascript" src="./js/js-beautify.js" ></script>
+    <script type="text/javascript" src="./js/qunit.js" ></script>
+
+    <style type="text/css">
+        .icon-blue { color:#60a7f1; }
+        .icon-green { color:#A4C639; }
+        .icon-light-gray { color:#ddd; }
+
+        .page-title { font-size:30px; padding: 20px 0 15px 0; margin-bottom:25px; border-bottom:1px solid #ccc; }
+
+            .flow-menu { max-width:none; margin-bottom:20px; }
+            .test-suites-box { padding-bottom:20px; }
+
+
+                .content-wrap { padding:15px; }
+
+                    .tpl-input,
+                    .tpl-input:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial; }
+    </style>
+
+</head>
+<body>
+        <h1 class="page-title">MustComb Demo</h1>
+    
+        <ul class="flow-menu ch-menu" role="navigation">
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Mustache Template Code Input</h2>
+                <div class="content-wrap">
+                    <textarea id="tpl-input" class="tpl-input"></textarea>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Info</h2>
+                <div class="content-wrap">
+                    <pre class="data-json-info-box" id="data-json-info-box">
+                        
+                    </pre>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Demo</h2>
+                <div class="content-wrap">
+                    <pre class="data-json-demo-box" id="data-json-demo-box">
+                        
+                    </pre>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Structure JSON</h2>
+                <div class="content-wrap">
+                    <pre class="form-struct-json-box" id="form-struct-json-box">
+                        
+                    </pre>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Data Form</h2>
+                <div class="content-wrap">
+                    <div class="data-form" id="data-form">
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
+                <div class="content-wrap">
+                    <pre class="form-data-json" id="form-data-json">
+                        
+                    </pre>
+                </div>
+            </li>
+            <li class="ch-expando">
+                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-ok icon-green"></i>Render Result:</h2>
+                <div class="content-wrap">
+                    <div class="render-result" id="render-result">
+                        
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+
+        <h1 class="page-title">Test Suite</h1>
+        <div id="qunit" clss="test-suites-box"></div>
+
+    <script type="text/javascript">
+        // Chico UI init
+        $(".ch-menu").menu().select(1).select(5).select(7);
+
+        (function(){
+            // Data Containers
+            var muArea = $('#tpl-input'),
+                dataInfoBox = $('#data-json-info-box'),
+                demoDataBox = $('#data-json-demo-box'),
+                formStructBox = $('#form-struct-json-box'),
+                dataFormBox = $('#data-form'),
+                formDataBox = $('#form-data-json'),
+                renderResBox = $('#render-result');
+            
+            // Data Cache
+            var muTplStr = localStorage.getItem('muTplStr') || muArea.val();
+
+            function init (  ) {
+
+                muArea.val( muTplStr );
+
+                muArea.keyup( mustacheCodeChange ).trigger('keyup');
+
+            }
+
+            // Event Handlers
+            function mustacheCodeChange (  ) {
+                mustComb.setMustache( Mustache );
+                dataInfoBox.html(
+                    beautifyJs( JSON.stringify( mustComb.getDataStructure( muArea.val() ) ) )
+                );
+                demoDataBox.html(
+                    beautifyJs( JSON.stringify( mustComb.getDataStructure( muArea.val() ).toPureJSON() ) )
+                );
+            }
+
+            init();
+
+        })();
+
+    </script>
+</body>
+</html>
