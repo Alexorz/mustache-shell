@@ -11,7 +11,10 @@
     <script type="text/javascript" src="./js/jquery.js" ></script>
     <script type="text/javascript" src="./js/chico-min-0.11.1.js" ></script>
     <script type="text/javascript" src="./js/mustache-0.5.2-dev.js" ></script>
-    <script type="text/javascript" src="./js/mustcomb.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb/core.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb/tree-node.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb/tpl-scanner.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb/editor-ui.js" ></script>
     <script type="text/javascript" src="./js/js-beautify.js" ></script>
     <script type="text/javascript" src="./js/qunit.js" ></script>
 
@@ -22,115 +25,201 @@
 
         .page-title { font-size:30px; padding: 20px 0 15px 0; margin-bottom:25px; border-bottom:1px solid #ccc; }
 
-            .flow-menu { max-width:none; margin-bottom:20px; }
-            .test-suites-box { padding-bottom:20px; }
+        .flow-menu { max-width:none; margin-bottom:20px; }
+        .test-suites-box { padding-bottom:20px; }
 
 
-                .content-wrap { padding:15px; }
+        .content-wrap { padding:15px; }
 
-                    .tpl-input,
-                    .tpl-input:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial; }
+        .tpl-input,
+        .tpl-input:focus,
+        .test-case-gene,
+        .test-case-gene:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial, "微软雅黑"; }
+        pre { font-family: Consolas, Arial, "微软雅黑"; font-size: 11px; }
     </style>
 
 </head>
 <body>
-        <h1 class="page-title">MustComb Demo</h1>
-    
-        <ul class="flow-menu ch-menu" role="navigation">
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Mustache Template Code Input</h2>
-                <div class="content-wrap">
-                    <textarea id="tpl-input" class="tpl-input"></textarea>
+    <h1 class="page-title">MustComb Demo</h1>
+
+    <ul class="flow-menu ch-menu" role="navigation">
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Mustache Template Code Input</h2>
+            <div class="content-wrap">
+                <textarea id="tpl-input" class="tpl-input"></textarea>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Info</h2>
+            <div class="content-wrap">
+                <pre class="data-json-info-box" id="data-json-info-box">
+                    
+                </pre>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Demo</h2>
+            <div class="content-wrap">
+                <pre class="data-json-demo-box" id="data-json-demo-box">
+                    
+                </pre>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Structure JSON</h2>
+            <div class="content-wrap">
+                <pre class="form-struct-json-box" id="form-struct-json-box">
+                    
+                </pre>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Data Form</h2>
+            <div class="content-wrap">
+                <div class="data-form" id="data-form">
+                    
                 </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Info</h2>
-                <div class="content-wrap">
-                    <pre class="data-json-info-box" id="data-json-info-box">
-                        
-                    </pre>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
+            <div class="content-wrap">
+                <pre class="form-data-json" id="form-data-json">
+                    
+                </pre>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-ok icon-green"></i>Render Result:</h2>
+            <div class="content-wrap">
+                <div class="render-result" id="render-result">
+                    
                 </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Demo</h2>
-                <div class="content-wrap">
-                    <pre class="data-json-demo-box" id="data-json-demo-box">
-                        
-                    </pre>
-                </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Structure JSON</h2>
-                <div class="content-wrap">
-                    <pre class="form-struct-json-box" id="form-struct-json-box">
-                        
-                    </pre>
-                </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Data Form</h2>
-                <div class="content-wrap">
-                    <div class="data-form" id="data-form">
-                        
-                    </div>
-                </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
-                <div class="content-wrap">
-                    <pre class="form-data-json" id="form-data-json">
-                        
-                    </pre>
-                </div>
-            </li>
-            <li class="ch-expando">
-                <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-ok icon-green"></i>Render Result:</h2>
-                <div class="content-wrap">
-                    <div class="render-result" id="render-result">
-                        
-                    </div>
-                </div>
-            </li>
-        </ul>
+            </div>
+        </li>
+        <li class="ch-expando">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Generate Case Data:</h2>
+            <div class="content-wrap">
+                <textarea class="test-case-gene" id="test-case-gene"></textarea>
+            </div>
+        </li>
+    </ul>
 
 
-        <h1 class="page-title">Test Suite</h1>
-        <div id="qunit" clss="test-suites-box"></div>
+    <h1 class="page-title" id="test-suite">Test Suite</h1>
+    <div class="test-suites-box">
+        <div id="qunit"></div>
+    </div>
 
     <script type="text/javascript">
         // Chico UI init
         $(".ch-menu").menu().select(1).select(5).select(7);
 
+        window['TEST_CASES'] = [
+            {
+                muTplStr : '',
+                muStruct : '{"key":null,"type":"object","meta":{},"value":{}}'
+            },
+            {
+                muTplStr : '{{field1}}',
+                muStruct : '{"id":4,"parentId":null,"key":null,"type":"object","meta":{},"value":{"field1":{"id":5,"parentId":4,"key":"field1","type":"string","meta":{},"value":""}}}'
+            },
+            {
+                muTplStr : '{{!meta=[ name:"名字1", length:1 ]}}{{field1}} {{!meta=[ name:"名字2" ]}}{{field1}}',
+                muStruct : '{"key":null,"type":"object","meta":{},"value":{"field1":{"key":"field1","type":"string","meta":{"name":"名字2","length":1},"value":""}}}'
+            },
+            {
+                "muTplStr": "{{!meta=[ name:\"名字1\", type:'array', length:1 ]}}\n{{#list}}\n   {{!meta=[ name:\"字段11\" ]}}\n   {{field1}}\n   {{!meta=[ type:'array', length:2 ]}}\n   {{#list}}\n      {{!meta=[ name:\"字段12\" ]}}\n      {{field1}}\n   {{/list}}\n{{/list}}\n\n{{#list}}\n   {{field2}}\n   {{#list}}\n      {{field3}}\n   {{/list}}\n{{/list}}",
+                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"name\":\"名字1\",\"type\":\"array\",\"length\":1},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段11\"},\"value\":\"\"},\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":2},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段12\"},\"value\":\"\"},\"field3\":{\"key\":\"field3\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"field2\":{\"key\":\"field2\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}"
+            }
+        ];
+
         (function(){
             // Data Containers
-            var muArea = $('#tpl-input'),
-                dataInfoBox = $('#data-json-info-box'),
-                demoDataBox = $('#data-json-demo-box'),
+            var muArea        = $('#tpl-input'),
+                dataInfoBox   = $('#data-json-info-box'),
+                demoDataBox   = $('#data-json-demo-box'),
                 formStructBox = $('#form-struct-json-box'),
-                dataFormBox = $('#data-form'),
-                formDataBox = $('#form-data-json'),
-                renderResBox = $('#render-result');
+                dataFormBox   = $('#data-form'),
+                formDataBox   = $('#form-data-json'),
+                renderResBox  = $('#render-result'),
+                caseDataArea  = $('#test-case-gene');
             
             // Data Cache
-            var muTplStr = localStorage.getItem('muTplStr') || muArea.val();
+            window.dataInfo = {};
+
+            var muTplStr,
+                muStruct;
+
+            var activeStorage = false;
+
 
             function init (  ) {
 
-                muArea.val( muTplStr );
+                Mustache.testing = 1;
+                mustComb.setMustache( Mustache );
 
-                muArea.keyup( mustacheCodeChange ).trigger('keyup');
+                muArea.keyup( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
+                caseDataArea.focus(function(){ var self = this; setTimeout(function(){ $(self).select() }, 100); });
 
+                runCase();
             }
 
             // Event Handlers
-            function mustacheCodeChange (  ) {
-                mustComb.setMustache( Mustache );
+            function mustacheCodeChange ( ) {
+
+                dataInfo.muTplStr = muTplStr = muArea.val();
+                dataInfo.muStruct = muStruct = mustComb.parse( muTplStr );
+
                 dataInfoBox.html(
-                    beautifyJs( JSON.stringify( mustComb.getDataStructure( muArea.val() ) ) )
+                    beautifyJs( JSON.stringify( muStruct ) )
                 );
+
                 demoDataBox.html(
-                    beautifyJs( JSON.stringify( mustComb.getDataStructure( muArea.val() ).toPureJSON() ) )
+                    beautifyJs( JSON.stringify( muStruct.toPureJSON() ) )
                 );
+
+                geneCaseData();
+                storeMutpl();
+            }
+
+            function geneCaseData () {
+                var caseData = {
+                    description : '',
+                    muTplStr    : muTplStr,
+                    muStruct    : JSON.stringify( muStruct )
+                };
+                caseDataArea.val( beautifyJs( JSON.stringify( caseData ) ) );
+            }
+                
+            function resetMutpl () {
+                muArea.val( localStorage.getItem('muTplStr') || '' ).trigger('change');
+            }
+
+            function storeMutpl () {
+                if ( activeStorage ) {
+                    localStorage.setItem('muTplStr', muArea.val() );
+                }
+            }
+
+
+            function runCase () {
+                var cases = window['TEST_CASES'];
+                for (var i = 0, l = cases.length; i < l; i++) {
+                    (function( currCase, isLast ){
+                        test( currCase.description || '', function(){
+                            muArea.val( currCase.muTplStr ).trigger('keyup');
+                            deepEqual(
+                                JSON.parse( dataInfo.muStruct.stringify() ),
+                                JSON.parse( dataInfo.muStruct.stringify.call( JSON.parse( currCase.muStruct ) ) )
+                            );
+                            if ( isLast ) {
+                                activeStorage = true;
+                                resetMutpl();
+                            }
+                        });
+                    })( cases[i], i+1 == l );
+                };
             }
 
             init();

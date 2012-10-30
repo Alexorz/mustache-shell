@@ -22,6 +22,7 @@ var Mustache;
   exports.name = "mustache.js";
   exports.version = "0.5.2";
   exports.tags = ["[[", "]]"];
+  exports.testing = false;
 
   exports.parse = parse;
   exports.clearCache = clearCache;
@@ -383,8 +384,9 @@ var Mustache;
         new RegExp("\\s*" + escapeRe(tags[1]))
       ];
     }
-
-    throw new Error("Invalid tags: " + tags.join(" "));
+    if ( !exports.testing ) {
+      throw new Error("Invalid tags: " + tags.join(" "));
+    }
   }
 
   /**
@@ -410,13 +412,13 @@ var Mustache;
         collector = token.tokens;
         break;
       case "/":
-        if (sections.length === 0) {
+        if (sections.length === 0 && !exports.testing) {
           throw new Error("Unopened section: " + token.value);
         }
 
         section = sections.pop();
 
-        if (section.value !== token.value) {
+        if (section.value !== token.value && !exports.testing) {
           throw new Error("Unclosed section: " + section.value);
         }
 
@@ -434,7 +436,7 @@ var Mustache;
     // Make sure there were no open sections when we're done.
     section = sections.pop();
 
-    if (section) {
+    if (section && !exports.testing) {
       throw new Error("Unclosed section: " + section.value);
     }
 
@@ -541,7 +543,7 @@ var Mustache;
       }
 
       // Match the closing tag.
-      if (!scanner.scan(tagRes[1])) {
+      if (!scanner.scan(tagRes[1])  && !exports.testing) {
         throw new Error("Unclosed tag at " + scanner.pos);
       }
 
