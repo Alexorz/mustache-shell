@@ -131,6 +131,12 @@
             {
                 "muTplStr": "{{!meta=[ name:\"名字1\", type:'array', length:1 ]}}\n{{#list}}\n   {{!meta=[ name:\"字段11\" ]}}\n   {{field1}}\n   {{!meta=[ type:'array', length:2 ]}}\n   {{#list}}\n      {{!meta=[ name:\"字段12\" ]}}\n      {{field1}}\n   {{/list}}\n{{/list}}\n\n{{#list}}\n   {{field2}}\n   {{#list}}\n      {{field3}}\n   {{/list}}\n{{/list}}",
                 "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"name\":\"名字1\",\"type\":\"array\",\"length\":1},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段11\"},\"value\":\"\"},\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":2},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段12\"},\"value\":\"\"},\"field3\":{\"key\":\"field3\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"field2\":{\"key\":\"field2\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}"
+            },
+            {
+                "description": "三级类目树",
+                "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasSubCate_}}\nfunction(){\n  return typeof this.cateList == 'array';\n}\n{{/_hasSubCate_}}\n\n<ul>\n    {{!meta=[ name:\"一级类目\", type:'array', subNameMap:{ cateName:'一级类目名', cateLink:'一级类目链接' } ]}}\n    {{#cateList}}\n    <li>\n        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n        {{#_hasSubCate_}}\n        <ul>\n            {{!meta=[ name:\"二级类目\", type:'array', length:2, subNameMap:{ cateName:'二级类目名', cateLink:'二级类目链接' }  ]}}\n            {{#cateList}}\n            <li>\n                <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                {{#_hasSubCate_}}\n                <ul>\n                    {{!meta=[ name:\"三级类目\", type:'array', subNameMap:{ cateName:'三级类目名', cateLink:'三级类目链接' }  ]}}\n                    {{#cateList}}\n                    <li>\n                        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                    </li>\n                    {{/cateList}}\n                </ul>\n                {{/_hasSubCate_}}\n            </li>\n            {{/cateList}}\n        </ul>\n        {{/_hasSubCate_}}\n     </li>\n    {{/cateList}}\n</ul>\n",
+                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
+                "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}"
             }
         ];
 
@@ -146,17 +152,19 @@
                 caseDataArea  = $('#test-case-gene');
             
             // Data Cache
-            window.dataInfo = {};
+            var dataInfo = window._MC_dataInfo = {};
 
             var muTplStr,
-                muStruct;
+                muStruct,
+                demoJSON,
+                fmStruct;
 
             var activeStorage = false;
 
 
             function init (  ) {
 
-                Mustache.testing = 1;
+                Mustache.testing = 0;
                 mustComb.setMustache( Mustache );
 
                 muArea.keyup( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
@@ -170,14 +178,21 @@
 
                 dataInfo.muTplStr = muTplStr = muArea.val();
                 dataInfo.muStruct = muStruct = mustComb.parse( muTplStr );
+                dataInfo.demoJSON = demoJSON = mustComb.getDemoJSON( muTplStr );
+                dataInfo.fmStruct = fmStruct = mustComb.getFormStruct( muTplStr );
 
                 dataInfoBox.html(
                     beautifyJs( JSON.stringify( muStruct ) )
                 );
 
                 demoDataBox.html(
-                    beautifyJs( JSON.stringify( muStruct.toPureJSON() ) )
+                    beautifyJs( JSON.stringify( demoJSON ) )
                 );
+
+                formStructBox.html(
+                    beautifyJs( JSON.stringify( fmStruct ) )
+                );
+
 
                 geneCaseData();
                 storeMutpl();
@@ -187,7 +202,9 @@
                 var caseData = {
                     description : '',
                     muTplStr    : muTplStr,
-                    muStruct    : JSON.stringify( muStruct )
+                    muStruct    : JSON.stringify( muStruct ),
+                    demoJSON    : JSON.stringify( demoJSON ),
+                    fmStruct    : JSON.stringify( fmStruct )
                 };
                 caseDataArea.val( beautifyJs( JSON.stringify( caseData ) ) );
             }
@@ -209,10 +226,22 @@
                     (function( currCase, isLast ){
                         test( currCase.description || '', function(){
                             muArea.val( currCase.muTplStr ).trigger('keyup');
+
                             deepEqual(
                                 JSON.parse( dataInfo.muStruct.stringify() ),
-                                JSON.parse( dataInfo.muStruct.stringify.call( JSON.parse( currCase.muStruct ) ) )
+                                JSON.parse( dataInfo.muStruct.stringify.call( JSON.parse( currCase.muStruct ) ) ),
+                                'Template Structure Match'
                             );
+
+                            if ( currCase.demoJSON ) {
+                                deepEqual(
+                                    dataInfo.demoJSON,
+                                    JSON.parse( currCase.demoJSON ),
+                                    'Data JSON Demo Match'
+                                );
+                            }
+
+                            
                             if ( isLast ) {
                                 activeStorage = true;
                                 resetMutpl();

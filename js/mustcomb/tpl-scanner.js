@@ -5,6 +5,7 @@
     var metaReg = /^\s*meta\s*\=\s*\[(.+?)\]\s*$/;
     var intnlNodeReg = /^\_.+\_$/;
 
+    exports.viewExtraMap = {};
 
     /**
      * 扫描HTML模板，返回模板构树
@@ -51,7 +52,6 @@
                 return 'leaf';
             }
         }
-
     };
 
     var _appendToStruct = function( root, node, parent, key ){
@@ -77,7 +77,7 @@
         }
     }
 
-    var scanTokenTree = function(tokenList, root, parent, undefined){
+    var scanTokenTree = function( tplStr, tokenList, root, parent, undefined){
 
         if ( root == undefined ) {
             root = new treeNode({});
@@ -101,8 +101,25 @@
                  || intnlNodeReg.test(token.value)
                  || ( root.metaCache && 'ignore|func'.indexOf(root.metaCache.type) != -1 )
             ) {
+                // 载入自定义方法
+                if ( root.metaCache && root.metaCache.type == 'func' ) {
+                    if ( exports.viewExtraMap[ tplStr ] == undefined) {
+                        exports.viewExtraMap[ tplStr ] = {};
+                    }
+                    if ( token.tokens && token.tokens[0] != undefined ) {
+                        exports.viewExtraMap[ tplStr ][ token.value ] = token.tokens[0].value;
+                    }
+                }
+
+                if ( ( root.metaCache && root.metaCache.type == 'ignore' ) || intnlNodeReg.test(token.value) ) {
+                    if ( token.tokens != undefined ) {
+                        scanTokenTree( tplStr, token.tokens, root, parent );
+                    }
+                }
+
                 continue;
             }
+
 
             root.metaCache = root.metaCache || {};
 
@@ -112,7 +129,7 @@
             }
             
             if ( typeof parent.meta.subNameMap == 'object' ) {
-                root.metaCache.name = parent.meta.subNameMap[token.value];
+                root.metaCache.name = parent.meta.subNameMap[token.value] || root.metaCache.name || '';
             }
 
             var metaType = root.metaCache['type'];
@@ -134,7 +151,7 @@
                 }
 
                 if ( 'array|object'.indexOf(existNode.type) != -1 && token.tokens !== undefined ) {
-                    scanTokenTree(token.tokens, root, existNode );
+                    scanTokenTree( tplStr, token.tokens, root, existNode );
                 }
             }
 
@@ -161,7 +178,7 @@
 
                 // 递归子节点
                 if(token.tokens !== undefined) {
-                    scanTokenTree(token.tokens, root, node );
+                    scanTokenTree( tplStr, token.tokens, root, node );
                 }
             }
 
@@ -177,13 +194,67 @@
      * 扫描HTML模板，返回模板标签结构树
      * (不含Text节点和注释节点)
      */
-    function scanMustacheTpl(tplStr){
-        // 同步Tag
-        Mustache.tags = exports.tags;
+    exports.parse = function(tplStr){
+        var staleTags,
+            cachItem;
 
-        return scanTokenTree( parse(tplStr) );
-    }
-    
-    exports.parse = scanMustacheTpl;
+        // 优先从缓存获取
+        cachItem = this.cache[ tplStr ];
+        if ( cachItem && cachItem.tplStruct != null ) {
+            return cachItem.tplStruct;
+        }
+        else {
+            cachItem = this.cache[ tplStr ] = {
+                tpltruct   : null
+            }
+        }
+
+        // 同步Tag
+        staleTags = exports._Mustache.tags;
+        exports._Mustache.tags = exports.tags;
+
+        cachItem.tplStruct = scanTokenTree( tplStr, parse(tplStr) );
+
+        // 重置Tag
+        exports._Mustache.tags = staleTags;
+
+        return cachItem.tplStruct;
+    };
+
+    /**
+     * 生成渲染模板所需要的示例JSON数据
+     */
+    exports.getDemoJSON = function(tplStr){
+        var tplStruct,
+            cachItem;
+
+        cachItem = this.cache[ tplStr ];
+
+        if ( cachItem && cachItem.demoJSON ) {
+            return cachItem.demoJSON;
+        }
+        else {
+            tplStruct = this.parse(tplStr);
+            cachItem = this.cache[ tplStr ];
+            cachItem.demoJSON = tplStruct.clone().bfTraversal(function(){
+                if ( this.meta && this.meta.type == 'array' ) {
+                    var meta   = this.meta;
+                    var tmpArr = new treeNode([]);
+                    var tmpLength = meta.length || meta.minLength || 1;
+
+                    while( --tmpLength > -1 ) {
+                        this.clone().appendTo( tmpArr );
+                    }
+                    
+                    this.type = 'array';
+                    this.value = tmpArr.value;
+                }
+                return this;
+            }).toPureJSON();
+        }
+
+        return cachItem.demoJSON;
+    };
+
 
 })();

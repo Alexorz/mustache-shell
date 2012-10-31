@@ -511,7 +511,7 @@ var Mustache;
 
           tokens.push({type: "text", value: chr});
 
-          if (chr === "\n") {
+          if (chr === "\n" && stripSpace) {
             stripSpace(); // Check for whitespace on the current line.
           }
         }
