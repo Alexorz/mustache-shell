@@ -1,0 +1,28 @@
+
+/*.editor-ui-node-hover { background: #FDF9D5; }*/
+
+.editor-ui-node { padding-left: 30px; }
+
+.editor-ui-keytitle { padding-top:15px; display: inline-block; *display: inline; zoom:1; }
+
+.editor-ui-leafarray-box   { padding-top: 5px; padding-bottom:15px; padding-left: 30px; }
+	.editor-ui-leafarray-table {  }
+	.editor-ui-leafarray-table tr {  }
+	.editor-ui-leafarray-table th,
+	.editor-ui-leafarray-table td { border: 1px solid #CDCDCD; }
+	.editor-ui-leafarray-table th { font-weight:normal; padding: 3px; }
+	.editor-ui-leafarray-table td { height:24px; }
+	.editor-ui-leafarray-table td input { border:0; padding:0 3px; margin:0; }
+
+
+.editor-ui-array-item { position: relative; padding-left:20px; }
+	.editor-ui-del-item { display:block; position:absolute; top:4%; left:0; height: 92%; width:16px; }
+		.editor-ui-del-item:before { display:block; content:''; position:absolute; left:6px; top:0; height: 100%; width:6px; border:1px solid #ddd; border-right:0; }
+	.editor-ui-del { position:absolute; top:50%; left:0; margin-top:-20px; display:block; color:#ddd; cursor:pointer; background: #fff;  padding: 5px 0 2px 0; }
+	.editor-ui-del-item:hover:before { border-color:#FF1783; }
+	.editor-ui-del-item:hover .editor-ui-del { color:#F92672; }
+
+	.editor-ui-add-item { padding-left:30px; }
+		.editor-ui-add { display: inline-block; *display: inline; zoom:1; cursor: pointer; color:#bbb; }
+		.editor-ui-add:hover { color:#A4C639 }
+	

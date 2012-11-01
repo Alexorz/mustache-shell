@@ -20,8 +20,8 @@ var mustComb = (function( exports ){
     			eval( 'view["'+ key +'"]='+ extraMap[ key ]);
     		}
     	}
-
-    	this._Mustache.redner( template, view, partials );
+        
+    	return this._Mustache.render( template, view, partials );
     };
 
     return exports;

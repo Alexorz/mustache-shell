@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="./css/chico-min-0.11.1.css">
     <link rel="stylesheet" href="./css/chico-mesh.css">
     <link rel="stylesheet" href="./css/qunit.css">
+    <link rel="stylesheet" href="./css/editor-ui.css">
+
 
     <script type="text/javascript" src="./js/jquery.js" ></script>
     <script type="text/javascript" src="./js/chico-min-0.11.1.js" ></script>
@@ -14,6 +16,7 @@
     <script type="text/javascript" src="./js/mustcomb/core.js" ></script>
     <script type="text/javascript" src="./js/mustcomb/tree-node.js" ></script>
     <script type="text/javascript" src="./js/mustcomb/tpl-scanner.js" ></script>
+    <script type="text/javascript" src="./js/mustcomb/editor-ui-tpl.js" ></script>
     <script type="text/javascript" src="./js/mustcomb/editor-ui.js" ></script>
     <script type="text/javascript" src="./js/js-beautify.js" ></script>
     <script type="text/javascript" src="./js/qunit.js" ></script>
@@ -133,10 +136,17 @@
                 "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"name\":\"名字1\",\"type\":\"array\",\"length\":1},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段11\"},\"value\":\"\"},\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":2},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段12\"},\"value\":\"\"},\"field3\":{\"key\":\"field3\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"field2\":{\"key\":\"field2\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}"
             },
             {
-                "description": "三级类目树",
+                "description": "三级类目树1",
                 "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasSubCate_}}\nfunction(){\n  return typeof this.cateList == 'array';\n}\n{{/_hasSubCate_}}\n\n<ul>\n    {{!meta=[ name:\"一级类目\", type:'array', subNameMap:{ cateName:'一级类目名', cateLink:'一级类目链接' } ]}}\n    {{#cateList}}\n    <li>\n        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n        {{#_hasSubCate_}}\n        <ul>\n            {{!meta=[ name:\"二级类目\", type:'array', length:2, subNameMap:{ cateName:'二级类目名', cateLink:'二级类目链接' }  ]}}\n            {{#cateList}}\n            <li>\n                <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                {{#_hasSubCate_}}\n                <ul>\n                    {{!meta=[ name:\"三级类目\", type:'array', subNameMap:{ cateName:'三级类目名', cateLink:'三级类目链接' }  ]}}\n                    {{#cateList}}\n                    <li>\n                        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                    </li>\n                    {{/cateList}}\n                </ul>\n                {{/_hasSubCate_}}\n            </li>\n            {{/cateList}}\n        </ul>\n        {{/_hasSubCate_}}\n     </li>\n    {{/cateList}}\n</ul>\n",
                 "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
                 "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}"
+            },
+            {
+                "description": "三级类目树2",
+                "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasSubCate_}}\nfunction(){\n  return typeof this.cateList == 'array';\n}\n{{/_hasSubCate_}}\n\n<ul>\n    {{!meta=[ name:\"一级类目\", type:'array', subNameMap:{ cateName:'一级类目名', cateLink:'一级类目链接' } ]}}\n    {{#cateList}}\n    <li>\n        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n        {{#_hasSubCate_}}\n        <ul>\n            {{!meta=[ name:\"二级类目\", type:'array', length:2, subNameMap:{ cateName:'二级类目名', cateLink:'二级类目链接' }  ]}}\n            {{#cateList}}\n            <li>\n                <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                {{#_hasSubCate_}}\n                <ul>\n                    {{!meta=[ name:\"三级类目\", type:'array', subNameMap:{ cateName:'三级类目名', cateLink:'三级类目链接' }  ]}}\n                    {{#cateList}}\n                    <li>\n                        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                    </li>\n                    {{/cateList}}\n                </ul>\n                {{/_hasSubCate_}}\n            </li>\n            {{/cateList}}\n        </ul>\n        {{/_hasSubCate_}}\n     </li>\n    {{/cateList}}\n</ul>\n",
+                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
+                "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}",
+                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"一级类目\",\"type\":\"array\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"一级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"一级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"二级类目\",\"type\":\"array\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"二级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"二级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"三级类目\",\"type\":\"array\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"三级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"三级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}]}"
             }
         ];
 
@@ -157,7 +167,9 @@
             var muTplStr,
                 muStruct,
                 demoJSON,
-                fmStruct;
+                fmStruct,
+                editorArea,
+                formData;
 
             var activeStorage = false;
 
@@ -176,10 +188,11 @@
             // Event Handlers
             function mustacheCodeChange ( ) {
 
-                dataInfo.muTplStr = muTplStr = muArea.val();
-                dataInfo.muStruct = muStruct = mustComb.parse( muTplStr );
-                dataInfo.demoJSON = demoJSON = mustComb.getDemoJSON( muTplStr );
-                dataInfo.fmStruct = fmStruct = mustComb.getFormStruct( muTplStr );
+                dataInfo.muTplStr   = muTplStr   = muArea.val();
+                dataInfo.muStruct   = muStruct   = mustComb.parse( muTplStr );
+                dataInfo.demoJSON   = demoJSON   = mustComb.getDemoJSON( muTplStr );
+                dataInfo.fmStruct   = fmStruct   = mustComb.getFormStruct( muTplStr );
+                dataInfo.editorArea = editorArea = mustComb.buildEditorArea( muTplStr, dataFormBox );
 
                 dataInfoBox.html(
                     beautifyJs( JSON.stringify( muStruct ) )
@@ -193,9 +206,17 @@
                     beautifyJs( JSON.stringify( fmStruct ) )
                 );
 
-
                 geneCaseData();
                 storeMutpl();
+            }
+
+
+            dataFormBox.find('input').live('blur', formDataChange);
+
+            function formDataChange() {
+                formDataBox.html(
+                    beautifyJs( JSON.stringify( editorArea.exportData() ) )
+                );
             }
 
             function geneCaseData () {
@@ -238,6 +259,14 @@
                                     dataInfo.demoJSON,
                                     JSON.parse( currCase.demoJSON ),
                                     'Data JSON Demo Match'
+                                );
+                            }
+
+                            if ( currCase.fmStruct ) {
+                                deepEqual(
+                                    dataInfo.fmStruct,
+                                    JSON.parse( currCase.fmStruct ),
+                                    'Form Structure Match'
                                 );
                             }
 
