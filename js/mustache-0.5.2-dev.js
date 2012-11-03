@@ -262,7 +262,10 @@ var Mustache;
         var buffer = "";
 
         for (var i = 0, len = value.length; i < len; ++i) {
-          buffer += callback(context.push(value[i]), this);
+          var tmp = value[i];
+          tmp['_index_']  = i;
+          tmp['_nIndex_'] = i+1;
+          buffer += callback(context.push(tmp), this);
         }
 
         return buffer;

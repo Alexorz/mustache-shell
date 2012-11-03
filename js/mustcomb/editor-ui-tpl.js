@@ -8,12 +8,8 @@
     }
 
 })({
-    main : [
-        ,'  {{> node}}'
-    ].join(''),
-
     node : [
-        ,'<div class="editor-ui-node" data-key="{{key}}">'
+        ,'<div class="editor-ui-node" data-key="{{key}}" data-type="{{type}}" data-index="{{_index_}}">'
         ,'  {{#_hasSubProp_}}'
         ,'  <ul class="editor-ui-prop-list">'
         ,'  {{#subProp}}'
@@ -43,7 +39,7 @@
         ,'  {{#_hasSubArray_}}'
         ,'  <ul class="editor-ui-array-list">'
         ,'  {{#subArray}}'
-        ,'      <li class="editor-ui-array" data-key="{{key}}">'
+        ,'      <li class="editor-ui-array" data-key="{{key}}" data-index="{{_index_}}">'
         ,'          <span class="editor-ui-keytitle">'
         ,'              {{name}} :'
         ,'          </span>'
@@ -63,13 +59,9 @@
         ,'                  </table>'
         ,'              </div>'
         ,'          {{/_isLeafArray_}}'
-
         ,'          {{^_isLeafArray_}}'
         ,'          <ul class="editor-ui-item-list">'
-        ,'              <li class="editor-ui-array-item">'
-        ,'                  <span class="editor-ui-del-item"> <span class="editor-ui-del"><i class="ch-icon-trash"></i></span> </span>'
-        ,'                  {{> node}}'
-        ,'              </li>'
+        ,'              {{> arrayItem}}'
         ,'              <li class="editor-ui-add-item"><span class="editor-ui-add"><i class="ch-icon-plus"></i></span></li>'
         ,'          </ul>'
         ,'          {{/_isLeafArray_}}'
@@ -78,6 +70,13 @@
         ,'  </ul>'
         ,'  {{/_hasSubArray_}}'
         ,'</div>'
+    ].join(''),
+
+    arrayItem : [
+        ,'  <li class="editor-ui-array-item">'
+        ,'      <span class="editor-ui-del-item"> <span class="editor-ui-del"><i class="ch-icon-trash"></i></span> </span>'
+        ,'      {{> node}}'
+        ,'  </li>'
     ].join('')
 
 });

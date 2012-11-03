@@ -36,6 +36,8 @@
 
         .tpl-input,
         .tpl-input:focus,
+        .form-data-json,
+        .form-data-json:focus,
         .test-case-gene,
         .test-case-gene:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial, "微软雅黑"; }
         pre { font-family: Consolas, Arial, "微软雅黑"; font-size: 11px; }
@@ -87,9 +89,7 @@
         <li class="ch-expando">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
             <div class="content-wrap">
-                <pre class="form-data-json" id="form-data-json">
-                    
-                </pre>
+                <textarea id="form-data-json" class="form-data-json"></textarea>
             </div>
         </li>
         <li class="ch-expando">
@@ -147,7 +147,14 @@
                 "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
                 "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}",
                 "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"一级类目\",\"type\":\"array\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"一级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"一级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"二级类目\",\"type\":\"array\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"二级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"二级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"三级类目\",\"type\":\"array\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"三级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"三级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}]}"
-            }
+            },
+{
+    "description": "",
+    "muTplStr": "\n{{!meta=[ type:'array', length:3 ]}}\n{{#Array-E}}\n  {{Sub-Prop-A}}\n  {{Sub-Prop-B}}\n  {{Sub-Prop-C}}\n  {{!meta=[ type:'object' ]}}\n  {{#Sub-Object-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n\t{{!meta=[ type:'array' ]}}\n\t{{#Sub-Sub-Array-A}}\n\t  {{Sub-Sub-Sub-Prop-A}}\n\t  {{Sub-Sub-Sub-Prop-B}}\n\t  {{Sub-Sub-Sub-Prop-C}}\n\t{{/Sub-Sub-Array-A}}\n\t{{!meta=[ type:'array' ]}}\n  {{/Sub-Object-A}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Array-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n  {{/Sub-Array-A}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Array-B}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n    {{!meta=[ type:'object' ]}}\n    {{#Sub-Sub-Sub-Object-A}}\n      {{Sub-Sub-Sub-Sub-Prop-A}}\n      {{Sub-Sub-Sub-Sub-Prop-B}}\n      {{Sub-Sub-Sub-Sub-Prop-C}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Sub-Array-A}}\n    {{Sub-Sub-Sub-Prop-A}}\n    {{Sub-Sub-Sub-Prop-B}}\n    {{Sub-Sub-Sub-Prop-C}}\n      {{!meta=[ type:'array' ]}}\n      {{#Sub-Sub-Sub-Array-A}}\n        {{Sub-Sub-Sub-Sub-Prop-A}}\n        {{Sub-Sub-Sub-Sub-Prop-B}}\n        {{Sub-Sub-Sub-Sub-Prop-C}}\n      {{/Sub-Sub-Sub-Array-A}}\n  {{/Sub-Sub-Array-A}}\n    {{/Sub-Sub-Sub-Object-A}}\n  {{/Sub-Array-B}}\n{{/Array-E}}",
+    "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"Array-E\":{\"key\":\"Array-E\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":3},\"value\":{\"Sub-Prop-A\":{\"key\":\"Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Prop-B\":{\"key\":\"Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Prop-C\":{\"key\":\"Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Object-A\":{\"key\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}},\"Sub-Array-A\":{\"key\":\"Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"Sub-Array-B\":{\"key\":\"Sub-Array-B\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Object-A\":{\"key\":\"Sub-Sub-Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"value\":{\"Sub-Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}}}}}}}}}",
+    "demoJSON": "{\"Array-E\":[{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]},{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]},{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]}]}",
+    "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"Array-E\",\"name\":\"Array-E\",\"type\":\"array\",\"meta\":{\"type\":\"array\",\"length\":3},\"subProp\":[{\"key\":\"Sub-Prop-A\",\"name\":\"Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Prop-B\",\"name\":\"Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Prop-C\",\"name\":\"Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[{\"key\":\"Sub-Object-A\",\"name\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}],\"subArray\":[{\"key\":\"Sub-Array-A\",\"name\":\"Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Array-B\",\"name\":\"Sub-Array-B\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[{\"key\":\"Sub-Sub-Sub-Object-A\",\"name\":\"Sub-Sub-Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}],\"subArray\":[]}]}]}"
+}
         ];
 
         (function(){
@@ -157,7 +164,7 @@
                 demoDataBox   = $('#data-json-demo-box'),
                 formStructBox = $('#form-struct-json-box'),
                 dataFormBox   = $('#data-form'),
-                formDataBox   = $('#form-data-json'),
+                formDataArea  = $('#form-data-json'),
                 renderResBox  = $('#render-result'),
                 caseDataArea  = $('#test-case-gene');
             
@@ -179,8 +186,10 @@
                 Mustache.testing = 0;
                 mustComb.setMustache( Mustache );
 
-                muArea.keyup( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
+                muArea.keyup( mustacheCodeChange ).blur( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
+                formDataArea.keyup( formDataJsonChange ).blur( formDataJsonChange ).change( formDataJsonChange ).trigger('keyup');
                 caseDataArea.focus(function(){ var self = this; setTimeout(function(){ $(self).select() }, 100); });
+                dataFormBox.find('input').live('blur', formDataChange);
 
                 runCase();
             }
@@ -205,16 +214,31 @@
                 formStructBox.html(
                     beautifyJs( JSON.stringify( fmStruct ) )
                 );
+                
+                formDataChange();
+                formDataJsonChange();
 
-                geneCaseData();
                 storeMutpl();
+                storeFormData();
+                geneCaseData();
             }
 
+            function formDataJsonChange() {
+                var jsonData;
+                try {
+                    jsonData = JSON.parse( formDataArea.val() || '{}' );
+                }
+                catch ( e ) {
+                    console.error( 'Form Data JSON Import - ' +  e );
+                }
 
-            dataFormBox.find('input').live('blur', formDataChange);
+                editorArea.importData(
+                    jsonData || {}
+                );
+            }
 
             function formDataChange() {
-                formDataBox.html(
+                formDataArea.val(
                     beautifyJs( JSON.stringify( editorArea.exportData() ) )
                 );
             }
@@ -237,6 +261,16 @@
             function storeMutpl () {
                 if ( activeStorage ) {
                     localStorage.setItem('muTplStr', muArea.val() );
+                }
+            }
+                
+            function resetFormData () {
+                formDataArea.val( localStorage.getItem('muFormData') || '' ).trigger('change');
+            }
+
+            function storeFormData () {
+                if ( activeStorage ) {
+                    localStorage.setItem('muFormData', formDataArea.val() );
                 }
             }
 
@@ -274,6 +308,8 @@
                             if ( isLast ) {
                                 activeStorage = true;
                                 resetMutpl();
+                                resetFormData();
+                                geneCaseData();
                             }
                         });
                     })( cases[i], i+1 == l );

@@ -77,32 +77,52 @@
         return res;
     };
 
+    var formStructMap = {};
     exports.buildEditorArea = function( tplStr, container ){
 
-        var tplParts = window.mustComb_UItpl;
+        var formStruct = this.getFormStruct( tplStr );
+        formStructMap[$(container)[0]] = formStruct;
 
         $(container).empty().html(
-            this.uiRender(
-                tplParts.main,
-                _extraFormStruct( this.getFormStruct( tplStr ) ),
-                tplParts
-            )
+            _buildEditorDOM( formStruct, true )
         );
 
+        _bindEditorAction( container, formStruct );
+
         return {
+            container : $(container),
+            
             exportData : function( ){
-                return _domValToJSON( $(container).find('.editor-ui-node:first') );
+                return _domValToJSON( this.container.find('.editor-ui-node:first') );
             },
 
             importData : function( obj ){
-                return _importData( obj, $(container).find('.editor-ui-node:first') );
+                return _importData( obj, this.container.find('.editor-ui-node:first') );
             }
         };
     };
 
     var _importData = function( obj, domNode ){
-        
+        console.log(  );
     };
+
+    var _buildEditorDOM = function( formStruct ){
+        var tplParts = window.mustComb_UItpl;
+        return exports.uiRender(
+            tplParts.node,
+            _extraFormStruct( formStruct, true ),
+            tplParts
+        )
+    }
+
+    var _buildArrayItemDOM = function( formStruct ){
+        var tplParts = window.mustComb_UItpl;
+        return exports.uiRender(
+            tplParts.arrayItem,
+            _extraFormStruct( formStruct ),
+            tplParts
+        )
+    }
 
     var _domValToJSON = function( domNode ){
         var currObj = {};
@@ -145,8 +165,56 @@
         return currObj;
     };
 
-    var _bindEditorAction = function(){
+    var bindedMap = {};
+    var _bindEditorAction = function( container, formStruct ){
+        if ( bindedMap[ container[0] ] ) {
+            return ;
+        }
 
+        container.find('.editor-ui-del').live('click', function(){
+            $(this).parents('.editor-ui-array-item').eq(0).remove();
+        });
+
+        container.find('.editor-ui-add').live('click', function(){
+            var $this = $(this);
+
+            var formStruct = formStructMap[ $(this).parents('.editor-ui-node').eq(-1).parent()[0] ];
+            var keyStack = [];
+            var typeStack = [];
+            var indexStack = [];
+            var parentArrayNode = $(this).parents('.editor-ui-array').eq(0);
+
+            typeStack.unshift('array');
+            indexStack.unshift( parentArrayNode.attr('data-index') );
+
+            $(this).parents().each(function(){
+                var $this = $(this);
+                var key  = $this.attr('data-key');
+                var type = $this.attr('data-type');
+                var index = $this.attr('data-index');
+                if ( $this.hasClass('editor-ui-node') ) {
+                    if ( key ) {
+                        typeStack.unshift(type);
+                        indexStack.unshift(index);
+                    }
+                }
+            });
+
+            var currNode = formStruct;
+            for (var i = 0; i < typeStack.length; i++) {
+                console.log(typeStack[i]);
+                currNode = currNode[ {
+                    'prop'   : 'subProp',
+                    'object' : 'subObject',
+                    'array'  : 'subArray'
+                }[ typeStack[i]] ][ indexStack[i] ];
+            };
+
+            $( _buildArrayItemDOM( currNode ) ).insertBefore( this.parentNode );
+
+        });
+
+        bindedMap[ container[0] ] = true;
     };
 
     var _getPropNodes = function( domNode ){
@@ -164,11 +232,11 @@
         return domNode.children('.editor-ui-array-list').children('.editor-ui-array');
     };
 
-    var _extraFormStruct = function( model ){
+    var _extraFormStruct = function( model, isRoot ){
         // Clone
         model = JSON.parse( JSON.stringify( model ) );
 
-        model._isRoot_ = true;
+        model._isRoot_ = !!isRoot;
 
         model._hasSubProp_ = function(){
             return this.subProp.length > 0;
