@@ -25,4 +25,7 @@
 	.editor-ui-add-item { padding-left:30px; }
 		.editor-ui-add { display: inline-block; *display: inline; zoom:1; cursor: pointer; color:#bbb; }
 		.editor-ui-add:hover { color:#A4C639 }
+
+	.editor-ui-array-del-disabled .editor-ui-del { font-size: 0; }
+	.editor-ui-array-add-disabled .editor-ui-add { font-size: 0; }
 	
