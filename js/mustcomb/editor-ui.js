@@ -88,9 +88,10 @@
             _buildEditorDOM( formStruct, true )
         );
 
-        _bindEditorAction( container, formStruct );
+        var editor = {
 
-        return {
+            currFocusedTable : null,
+
             container : $(container),
 
             exportData : function( ){
@@ -101,6 +102,10 @@
                 return _importData( obj, this.container.find('.editor-ui-node:first') );
             }
         };
+
+        _bindEditorAction.call( editor, container, formStruct );
+
+        return editor;
     };
 
     var _importData = function( obj, domNode, key ){
@@ -263,17 +268,25 @@
     var bindedMap = {};
     var arrayAddDisableClass = 'editor-ui-array-add-disabled';
     var arrayDelDisableClass = 'editor-ui-array-del-disabled';
+    var trSelectClass = 'editor-ui-tr-selected';
     var _bindEditorAction = function( container, formStruct ){
+
+        var self = this;
+
         if ( bindedMap[ container[0] ] ) {
             return ;
         }
+
+        container.find('table').live('mouseover', function(){
+            self.currFocusedTable = $(this);
+        });
 
         container.find('.editor-ui-del').live('click', function(){
             var arrList = $(this).parents('.editor-ui-array').eq(0);
             if ( !arrList.hasClass( arrayDelDisableClass ) ) {
                 $(this).parents('.editor-ui-array-item').eq(0).remove();
             }
-            checkArrayAddDelAble( arrList );
+            _checkArrayAddDelAble( arrList );
         });
 
         container.find('.editor-ui-add').live('click', function(){
@@ -281,13 +294,159 @@
             if ( !arrList.hasClass( arrayAddDisableClass ) ) {
                 _addArrayItemDom.call(this);
             }
-            checkArrayAddDelAble( arrList );
+            _checkArrayAddDelAble( arrList );
+        });
+
+        container.find('.editor-ui-up').live('click', function(){
+            var arrItem = $(this).parents('.editor-ui-array-item').eq(0);
+            var prev = arrItem.prev('.editor-ui-array-item');
+            if ( prev ) {
+                arrItem.insertBefore( prev );
+            }
+        });
+
+        container.find('.editor-ui-down').live('click', function(){
+            var arrItem = $(this).parents('.editor-ui-array-item').eq(0);
+            var next = arrItem.next('.editor-ui-array-item');
+            if ( next ) {
+                arrItem.insertAfter( next );
+            }
+        });
+
+        container.find('tr.editor-ui-table-valtr').live('click', function( e ){
+            var tr = $(this);
+            if ( e.ctrlKey ) {
+                tr.toggleClass(trSelectClass);
+            }
+        });
+
+        $(window).keydown(function( e ){
+            var currFocusedTable = self.currFocusedTable;
+            if ( currFocusedTable ) {
+                // move up
+                if ( e.which == 38 ) {
+                    if ( e.ctrlKey ) {
+                        _moveLineUp( currFocusedTable.children('tbody').children('tr.'+trSelectClass) );
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                // move down
+                else if ( e.which == 40 ) {
+                    if ( e.ctrlKey ) {
+                        _moveLineDown( currFocusedTable.children('tbody').children('tr.'+trSelectClass) );
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                // insert
+                else if ( e.which == 45 ) {
+                    var rows = currFocusedTable.find('.editor-ui-table-valtr');
+                    var maxLength = currFocusedTable.attr('data-max-length');
+                    if ( !maxLength || maxLength > rows.length ) {
+                        rows.eq(-1).clone().find('input').val('').end().insertAfter( rows.eq(-1) );
+                    }
+                    
+                }
+                // delete
+                else if ( e.which == 46 ) {
+                    var rows = currFocusedTable.find('.editor-ui-table-valtr');
+                    var selectedRows = currFocusedTable.find('tr.'+trSelectClass);
+                    var minLength = Number( currFocusedTable.attr('data-min-length') );
+                    if ( minLength ) {
+                        selectedRows.removeClass(trSelectClass).find('input').val('');
+                        for (var i = selectedRows.length - ( selectedRows.length + minLength - rows.length ) - 1; i >= 0; i--) {
+                            selectedRows.eq(i).remove();
+                        };
+                    }
+                    else {
+                        selectedRows.remove();
+                    }
+                }
+            }
+        });
+
+        // Parse form Excel
+        container.find('tr.editor-ui-table-valtr input').live('paste', function( e ){
+
+            var parseStr = e.originalEvent.clipboardData.getData("text/plain"),
+                input = $(this),
+                currTd = input.parent(),
+                currTr = currTd.parent(),
+                trs = currTr.add( currTr.nextAll('tr') ),
+                fromTdIndex = currTd.index(),
+                parseTable;
+
+            parseTable = parseStr.split(/\r\n|\n|\r/);
+
+            for (var i = parseTable.length - 1; i >= 0; i--) {
+                parseTable[i] = parseTable[i].split('\t');
+            };
+
+            if ( parseTable.length > 1 || (parseTable[0] || []).length > 1 )  {
+
+                trs.each(function( i ){
+                    var tds = $(this).children('td'),
+                        currLine = parseTable[ i ];
+                    if ( currLine ) {
+                        for (var i = currLine.length - 1; i >= 0; i--) {
+                            tds.eq( fromTdIndex + i ).children('input').val( currLine[i].trim() );
+                        };
+                    }
+                });
+
+                setTimeout(function(){
+                    currTd.children('input').val( parseTable[0][0].trim() );
+                }, 10);
+
+            }
+        });
+        
+        // Click input then select all
+        var tmo;
+        container.find('tr.editor-ui-table-valtr input').live('focus', function(){
+            var self = this;
+            clearTimeout(tmo);
+            tmo = setTimeout(function(){
+                $(self).select();
+            }, 10);
+        });
+
+        // Unselect all tr
+        container.click(function( e ){
+            var currFocusedTable = self.currFocusedTable;
+            if ( e.ctrlKey && $(e.target).parents('table').index( currFocusedTable[0] ) == -1 ) {
+                currFocusedTable.children('tbody').children('tr.'+trSelectClass).removeClass(trSelectClass);
+            }
         });
 
         bindedMap[ container[0] ] = true;
     };
 
-    var checkArrayAddDelAble = function ( arrList ) {
+    var _moveLineUp = function ( tr ) {
+        var currTr, trPrev, trDetail;
+        tr = $(tr);
+        for (var i = 0, len = tr.length; i < len; i++) {
+            currTr = $(tr[i]);
+                trPrev = currTr.prev();
+                if ( trPrev.length && trPrev.children('th').length === 0 && !trPrev.hasClass(trSelectClass) ) {
+                    currTr.insertBefore( trPrev );
+                }
+        };
+    }
+    var _moveLineDown = function ( tr ) {
+        var currTr, trNext, trDetail;
+        tr = $(tr);
+        for (var i = tr.length - 1; i >= 0; i--) {
+            currTr = $(tr[i]);
+                trNext = currTr.next();
+                if ( trNext.length && !trNext.hasClass(trSelectClass) ) {
+                    currTr.insertAfter( trNext );
+                }
+        };
+    }
+
+    var _checkArrayAddDelAble = function ( arrList ) {
         var minLength = arrList.attr('data-min-length');
         var maxLength = arrList.attr('data-max-length');
         var currLength = arrList.children('.editor-ui-array-item-list').children('.editor-ui-array-item').length;

@@ -8,19 +8,27 @@
 .editor-ui-leafarray-box   { padding-top: 5px; padding-bottom:15px; padding-left: 30px; }
 	.editor-ui-leafarray-table {  }
 	.editor-ui-leafarray-table tr {  }
+	.editor-ui-leafarray-table .editor-ui-tr-selected { background:#e2b4FF; }
 	.editor-ui-leafarray-table th,
 	.editor-ui-leafarray-table td { border: 1px solid #CDCDCD; }
-	.editor-ui-leafarray-table th { font-weight:normal; padding: 3px; }
-	.editor-ui-leafarray-table td { height:24px; }
-	.editor-ui-leafarray-table td input { border:0; padding:0 3px; margin:0; }
+	.editor-ui-leafarray-table th { font-weight:normal; padding: 3px; background: #efefef; }
+	.editor-ui-leafarray-table td {  }
+	.editor-ui-leafarray-table td input { height:24px; border:0; padding:0 3px; margin:0; background: transparent; }
 
 
 .editor-ui-array-item { position: relative; padding-left:20px; }
-	.editor-ui-del-item { display:block; position:absolute; top:4%; left:0; height: 92%; width:16px; }
-		.editor-ui-del-item:before { display:block; content:''; position:absolute; left:6px; top:0; height: 100%; width:6px; border:1px solid #ddd; border-right:0; }
-	.editor-ui-del { position:absolute; top:50%; left:0; margin-top:-20px; display:block; color:#ddd; cursor:pointer; background: #fff;  padding: 5px 0 2px 0; }
-	.editor-ui-del-item:hover:before { border-color:#FF1783; }
-	.editor-ui-del-item:hover .editor-ui-del { color:#F92672; }
+	.editor-ui-options { display:block; position:absolute; top:4%; left:0; height: 92%; width:16px; }
+		.editor-ui-options:before { display:block; content:''; position:absolute; left:7px; top:0; height: 100%; width:6px; border:1px solid #ddd; border-right:0; }
+		.editor-ui-option-item { display:block; height:30px; width:100%; line-height:31px; position:absolute; top:50%; left:0; cursor:pointer; background: #fff; color:#ddd; font-size:13px; text-align:left; }
+		.editor-ui-del  { margin-top:-15px; text-indent: 1px; }
+		.editor-ui-up   { margin-top:-45px; }
+		.editor-ui-down { margin-top:15px; }
+		.editor-ui-options:hover:before { border-color:#999; }
+		.editor-ui-del:hover { color:#F92672; }
+		.editor-ui-up:hover,
+		.editor-ui-down:hover { color:#31BAFF; }
+		
+
 
 	.editor-ui-add-item { padding-left:30px; }
 		.editor-ui-add { display: inline-block; *display: inline; zoom:1; cursor: pointer; color:#bbb; }

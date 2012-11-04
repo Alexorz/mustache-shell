@@ -45,7 +45,7 @@
         ,'          </span>'
         ,'          {{#_isLeafArray_}}'
         ,'              <div class="editor-ui-leafarray-box">'
-        ,'                  <table class="editor-ui-leafarray-table">'
+        ,'                  <table class="editor-ui-leafarray-table" {{#meta}}data-length="{{length}}" data-min-length="{{minLength}}" data-max-length="{{maxLength}}"{{/meta}}>'
         ,'                      <tr class="editor-ui-table-keytr">'
         ,'                          {{#subProp}}'
         ,'                          <th data-key="{{key}}" class="editor-ui-table-keycell">{{name}}</th>'
@@ -78,7 +78,11 @@
 
     arrayItem : [
         ,'  <li class="editor-ui-array-item">'
-        ,'      <span class="editor-ui-del-item"> <span class="editor-ui-del"><i class="ch-icon-trash"></i></span> </span>'
+        ,'      <span class="editor-ui-options">'
+        ,'          <span class="editor-ui-up editor-ui-option-item"><i class="ch-icon-chevron-up"></i></span>'
+        ,'          <span class="editor-ui-del editor-ui-option-item"><i class="ch-icon-trash"></i></span>'
+        ,'          <span class="editor-ui-down editor-ui-option-item"><i class="ch-icon-chevron-down"></i></span>'
+        ,'      </span>'
         ,'      {{> node}}'
         ,'  </li>'
     ].join('')
