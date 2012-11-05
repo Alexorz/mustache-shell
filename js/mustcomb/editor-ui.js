@@ -173,6 +173,7 @@
     var _importDataForLeafArray = function( arr, tableNode, meta ){
         var keyCells = tableNode.find('.editor-ui-table-keycell');
         var valTrs   = tableNode.find('.editor-ui-table-valtr');
+        var keyTr    = keyCells.eq(0).parent();
 
         if ( meta.maxLength ) {
             if ( arr.length > meta.maxLength ) {
@@ -187,8 +188,16 @@
         }
 
         if ( valTrs.length < arr.length ) {
+            
             for (var i = arr.length - valTrs.length - 1; i >= 0; i--) {
-                valTrs.add( valTrs.eq(-1).clone().insertAfter( valTrs.eq(-1) ) );
+                var newTr = $('<tr>').addClass('editor-ui-table-valtr').html( new Array( keyCells.length +1 ).join('<td><input type="text"></td>') );
+                if ( valTrs.length ) {
+                    newTr.insertAfter( valTrs.eq(-1) );
+                }
+                else {
+                    newTr.insertAfter( keyTr );
+                }
+                valTrs = valTrs.add( newTr );
             };
         }
         else if ( valTrs.length > arr.length ) {
