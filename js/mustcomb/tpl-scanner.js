@@ -123,7 +123,6 @@
 
             root.metaCache = root.metaCache || {};
 
-
             if ( typeof root.metaCache.nameMap == 'object' ) {
                 parent.meta.subNameMap = $.extend( parent.meta.subNameMap || {}, root.metaCache.nameMap );
             }
@@ -138,13 +137,16 @@
 
             var isL = token.value == 'productList';
 
-            if ( parent.type == 'object' ) {
-                existNode = parent.children(function(){
-                    return this.key != null && this.key == token.value;
-                })[0];
+            if ( parent.type != 'object' ) {
+                parent = parent.parent() || parent;
             }
 
+            existNode = parent.children(function(){
+                return this.key != null && this.key == token.value;
+            })[0];
+
             if ( existNode ) {
+
                 if ( root.metaCache ) {
                     existNode.meta = $.extend( existNode.meta, root.metaCache || {} );
                     root.metaCache = null;
@@ -164,7 +166,7 @@
                         'array' : {},
                         'object': {},
                         'leaf'  : ''
-                    }[ nodeType ]
+                    }[ nodeType ] || ''
                 );
 
                 node.meta = root.metaCache;
