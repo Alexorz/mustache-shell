@@ -39,7 +39,7 @@
         ,'  {{#_hasSubArray_}}'
         ,'  <ul class="editor-ui-array-list">'
         ,'  {{#subArray}}'
-        ,'      <li class="editor-ui-array" data-key="{{key}}" data-index="{{_index_}}" {{#_isLeafArray_}}data-leaf="true"{{/_isLeafArray_}}  {{#meta}}data-length="{{length}}" data-min-length="{{minLength}}" data-max-length="{{maxLength}}"{{/meta}}>'
+        ,'      <li class="editor-ui-array {{^_addAble_}}editor-ui-array-add-disabled{{/_addAble_}} {{^_delAble_}}editor-ui-array-del-disabled{{/_delAble_}}" data-key="{{key}}" data-index="{{_index_}}" {{#_isLeafArray_}}data-leaf="true"{{/_isLeafArray_}}  {{#meta}}data-length="{{length}}" data-min-length="{{minLength}}" data-max-length="{{maxLength}}"{{/meta}}>'
         ,'          <span class="editor-ui-keytitle">'
         ,'              {{name}} :'
         ,'          </span>'

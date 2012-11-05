@@ -34,6 +34,6 @@
 		.editor-ui-add { display: inline-block; *display: inline; zoom:1; cursor: pointer; color:#bbb; }
 		.editor-ui-add:hover { color:#A4C639 }
 
-	.editor-ui-array-del-disabled .editor-ui-del { font-size: 0; }
-	.editor-ui-array-add-disabled .editor-ui-add { font-size: 0; }
+	.editor-ui-array-del-disabled .editor-ui-del { cursor: default; display:none; }
+	.editor-ui-array-add-disabled .editor-ui-add { cursor: default; display:none; }
 	

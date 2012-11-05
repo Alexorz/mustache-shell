@@ -546,9 +546,10 @@
         model._isRoot_ = !!isRoot;
 
         model._initLength_ = function(){
-            var length = this.meta.length;
-            var minLength = this.meta.minLength;
-            var maxLength = this.meta.maxLength;
+            var meta = this.meta || {};
+            var length = meta.length;
+            var minLength = meta.minLength;
+            var maxLength = meta.maxLength;
 
             length = length || minLength || 1;
             if ( minLength && minLength > length ) {
@@ -563,7 +564,17 @@
                 resArr.push(this);
             };
             return resArr;
-        }
+        };
+
+        model._addAble_ = function() {
+            var meta = this.meta || {};
+            return !meta.maxLength || (meta.length || 1) < meta.maxLength;
+        };
+
+        model._delAble_ = function() {
+            var meta = this.meta || {};
+            return !meta.minLength || (meta.length || 1) > meta.minLength;
+        };
 
         model._hasSubProp_ = function(){
             return this.subProp.length > 0;
