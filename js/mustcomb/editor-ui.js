@@ -121,10 +121,18 @@
         else if ( type == 'array' ) {
             subNode = domNode.find('.editor-ui-array[data-key='+ key +']').eq(0);
             var meta = {
-                length : subNode.attr('data-length') || 1,
+                length : subNode.attr('data-length'),
                 minLength : subNode.attr('data-min-length') || null,
                 maxLength : subNode.attr('data-max-length') || null
             };
+
+            if ( meta.length === 0 || meta.length === '' ) {
+                meta.length = 0;
+            }
+            else {
+                meta.length = meta.length || 1;
+            }
+
             if ( subNode.attr('data-leaf') ) {
                 _importDataForLeafArray( obj, subNode.find('table.editor-ui-leafarray-table').eq(0), meta );
             }
@@ -350,10 +358,17 @@
                 }
                 // insert
                 else if ( e.which == 45 ) {
+                    var keyRow = currFocusedTable.find('.editor-ui-table-keytr');
                     var rows = currFocusedTable.find('.editor-ui-table-valtr');
                     var maxLength = currFocusedTable.attr('data-max-length');
                     if ( !maxLength || maxLength > rows.length ) {
-                        rows.eq(-1).clone().find('input').val('').end().insertAfter( rows.eq(-1) );
+                        var newTr = $('<tr>').addClass('editor-ui-table-valtr').html( new Array( keyRow.children().length +1 ).join('<td><input type="text"></td>') );
+                        if ( rows.length ) {
+                            rows.eq(-1).after( newTr );
+                        }
+                        else {
+                            keyRow.after( newTr );
+                        }
                     }
                     
                 }
@@ -551,7 +566,13 @@
             var minLength = meta.minLength;
             var maxLength = meta.maxLength;
 
-            length = length || minLength || 1;
+            if ( length === 0 || length === '' ) {
+                length = 0;
+            }
+            else {
+                length = length || minLength || 1;
+            }
+
             if ( minLength && minLength > length ) {
                 length = minLength;
             }
