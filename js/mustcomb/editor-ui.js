@@ -171,7 +171,8 @@
                 arrItems.eq(-1).remove();
             };
         }
-
+        
+        arrItems = listNode.children('.editor-ui-array-item');
         arrItems.each(function( i ){
             _importData( arr[i], $(this), key );
         });
@@ -216,9 +217,11 @@
 
         valTrs.each(function(i){
             var currObj = arr[i];
-            $(this).find('input').each(function( j ){
-                this.value = currObj[ keyCells.eq(j).attr('data-key') ] || '';
-            });
+            if ( currObj ) {
+                $(this).find('input').each(function( j ){
+                    this.value = currObj[ keyCells.eq(j).attr('data-key') ] || '';
+                });
+            }
         });
 
     };
@@ -246,7 +249,7 @@
 
         _getPropNodes( domNode ).each(function( i ){
 
-            currObj[ this.getAttribute('data-key') ] = $(this).children('input:first').val() || '';
+            currObj[ this.getAttribute('data-key') ] = ($(this).children('input:first').val() || '').trim();
         });
 
         _getObjNodes( domNode ).each(function( i ){
@@ -268,7 +271,7 @@
                 leafBox.find('tr.editor-ui-table-valtr').each(function( j ){
                     subArray[ j ] = {};
                     $(this).children('td').each(function( k ){
-                        subArray[ j ][ keyList[ k ] ] = $(this).find('input:first').val();
+                        subArray[ j ][ keyList[ k ] ] = ( $(this).find('input:first').val()  || '' ).trim();
                     });
                 });
             }
@@ -294,11 +297,12 @@
             return ;
         }
 
-        container.find('table').live('mouseover', function(){
+        container.delegate('table', 'mouseover', function(){
             self.currFocusedTable = $(this);
         });
 
-        container.find('.editor-ui-del').live('click', function(){
+
+        container.delegate('.editor-ui-del', 'click', function(){
             var arrList = $(this).parents('.editor-ui-array').eq(0);
             if ( !arrList.hasClass( arrayDelDisableClass ) ) {
                 $(this).parents('.editor-ui-array-item').eq(0).remove();
@@ -306,7 +310,7 @@
             _checkArrayAddDelAble( arrList );
         });
 
-        container.find('.editor-ui-add').live('click', function(){
+        container.delegate('.editor-ui-add', 'click', function(){
             var arrList = $(this).parents('.editor-ui-array').eq(0);
             if ( !arrList.hasClass( arrayAddDisableClass ) ) {
                 _addArrayItemDom.call(this);
@@ -314,7 +318,7 @@
             _checkArrayAddDelAble( arrList );
         });
 
-        container.find('.editor-ui-up').live('click', function(){
+        container.delegate('.editor-ui-up', 'click', function(){
             var arrItem = $(this).parents('.editor-ui-array-item').eq(0);
             var prev = arrItem.prev('.editor-ui-array-item');
             if ( prev ) {
@@ -322,7 +326,7 @@
             }
         });
 
-        container.find('.editor-ui-down').live('click', function(){
+        container.delegate('.editor-ui-down', 'click', function(){
             var arrItem = $(this).parents('.editor-ui-array-item').eq(0);
             var next = arrItem.next('.editor-ui-array-item');
             if ( next ) {
@@ -330,7 +334,7 @@
             }
         });
 
-        container.find('tr.editor-ui-table-valtr').live('click', function( e ){
+        container.delegate('tr.editor-ui-table-valtr', 'click', function( e ){
             var tr = $(this);
             if ( e.ctrlKey ) {
                 tr.toggleClass(trSelectClass);
@@ -391,7 +395,7 @@
         });
 
         // Parse form Excel
-        container.find('tr.editor-ui-table-valtr input').live('paste', function( e ){
+        container.delegate('tr.editor-ui-table-valtr input', 'paste', function( e ){
 
             var parseStr = e.originalEvent.clipboardData.getData("text/plain"),
                 input = $(this),
@@ -428,12 +432,17 @@
         
         // Click input then select all
         var tmo;
-        container.find('tr.editor-ui-table-valtr input').live('focus', function(){
+
+        container.delegate('tr.editor-ui-table-valtr input', 'focus', function(){
             var self = this;
             clearTimeout(tmo);
             tmo = setTimeout(function(){
                 $(self).select();
             }, 10);
+        }).delegate('tr.editor-ui-table-valtr input', 'mousedown', function( e ){
+            if ( e.ctrlKey ) {
+                e.preventDefault();
+            }
         });
 
         // Unselect all tr
@@ -526,16 +535,18 @@
         });
         var currNode = formStruct;
         var tmp;
-        for (var i = 0; i < typeStack.length; i++) {
-            tmp = currNode[ {
-                'prop'   : 'subProp',
-                'object' : 'subObject',
-                'array'  : 'subArray'
-            }[ typeStack[i]] ];
-            currNode = tmp[ indexStack[i] ] ? tmp[ indexStack[i] ] : tmp[0];
-        };
-
-        $( _buildArrayItemDOM( currNode ) ).insertBefore( inserter );
+        if ( currNode ) {
+            for (var i = 0; i < typeStack.length; i++) {
+                tmp = currNode[ {
+                    'prop'   : 'subProp',
+                    'object' : 'subObject',
+                    'array'  : 'subArray'
+                }[ typeStack[i]] ];
+                currNode = tmp[ indexStack[i] ] ? tmp[ indexStack[i] ] : tmp[0];
+            };
+            
+            $( _buildArrayItemDOM( currNode ) ).insertBefore( inserter );
+        }
 
     };
 

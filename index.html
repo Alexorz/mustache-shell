@@ -208,7 +208,7 @@
                 mustComb.setMustache( Mustache );
 
                 muArea.keyup( mustacheCodeChange ).blur( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
-                formDataArea.keyup( formDataJsonChange ).blur( formDataJsonChange ).change( formDataJsonChange ).trigger('keyup');
+                formDataArea.blur( formDataJsonChange ).trigger('blur');
                 caseDataArea.focus(function(){ var self = this; setTimeout(function(){ $(self).select() }, 100); });
                 dataFormBox.find('input').live('blur', formDataChange);
 
