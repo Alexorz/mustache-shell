@@ -94,9 +94,10 @@
                 root.metaCache = parseMetaStr( RegExp.$1 );
             }
 
-            // 分别过滤如下节点: text节点, 注释节点, 内置属性节点, Meta中type为ignore或func的节点
+            // 分别过滤如下节点: text节点, token切换节点, 注释节点, 内置属性节点, Meta中type为ignore或func的节点
             if(
                     token.type == 'text'
+                 || token.type == '='
                  || token.type == '!'
                  || intnlNodeReg.test(token.value)
                  || ( root.metaCache && 'ignore|func'.indexOf(root.metaCache.type) != -1 )
