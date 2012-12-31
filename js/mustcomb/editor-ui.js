@@ -2,7 +2,7 @@
 (function( exports ){
     exports = mustComb;
 
-
+    var isMac = navigator.platform.indexOf('Mac') == 0;
 
     exports.getFormStruct = function( tplStr ){
         var cachItem,
@@ -334,19 +334,37 @@
             }
         });
 
+        // select line
+        var lastestLine;
         container.delegate('tr.editor-ui-table-valtr', 'click', function( e ){
             var tr = $(this);
-            if ( e.ctrlKey ) {
-                tr.toggleClass(trSelectClass);
+            if ( e.ctrlKey || ( isMac && e.altKey ) ) {
+                if ( e.shiftKey && lastestLine && lastestLine[0] != tr[0] ) {
+                    // select until
+                    var lines = lastestLine[ lastestLine.index() < tr.index() ? 'nextUntil':'prevUntil' ]( this, 'tr' ).add( this );
+                    if ( lastestLine.hasClass(trSelectClass) ) {
+                        lines.addClass( trSelectClass );
+                    }
+                    else {
+                        lines.removeClass( trSelectClass );
+                    }
+                }
+                else {
+                    // select line
+                    tr.toggleClass(trSelectClass);   
+                }
+
+                lastestLine = tr;
             }
         });
 
         $(window).keydown(function( e ){
+
             var currFocusedTable = self.currFocusedTable;
             if ( currFocusedTable ) {
                 // move up
                 if ( e.which == 38 ) {
-                    if ( e.ctrlKey ) {
+                    if ( e.ctrlKey || ( isMac && e.altKey ) ) {
                         _moveLineUp( currFocusedTable.children('tbody').children('tr.'+trSelectClass) );
                         e.preventDefault();
                         return false;
@@ -354,30 +372,39 @@
                 }
                 // move down
                 else if ( e.which == 40 ) {
-                    if ( e.ctrlKey ) {
+                    if ( e.ctrlKey || ( isMac && e.altKey )  ) {
                         _moveLineDown( currFocusedTable.children('tbody').children('tr.'+trSelectClass) );
                         e.preventDefault();
                         return false;
                     }
                 }
                 // insert
-                else if ( e.which == 45 ) {
+                else if ( e.which == 45 || ( isMac && e.altKey && ( e.which == 73 || e.which == 229 ) ) ) {
                     var keyRow = currFocusedTable.find('.editor-ui-table-keytr');
                     var rows = currFocusedTable.find('.editor-ui-table-valtr');
                     var maxLength = currFocusedTable.attr('data-max-length');
                     if ( !maxLength || maxLength > rows.length ) {
                         var newTr = $('<tr>').addClass('editor-ui-table-valtr').html( new Array( keyRow.children().length +1 ).join('<td><input type="text"></td>') );
                         if ( rows.length ) {
-                            rows.eq(-1).after( newTr );
+                            if ( e.ctrlKey ) {
+                                rows.eq(-1).after( newTr );
+                            }
+                            else {
+                                rows.eq(0).before( newTr );
+                            }
                         }
                         else {
                             keyRow.after( newTr );
                         }
                     }
+
+                    if ( isMac ) {
+                        return false;
+                    }
                     
                 }
                 // delete
-                else if ( e.which == 46 ) {
+                else if ( e.which == 46 || ( isMac && e.altKey && e.which == 68 ) ) {
                     var rows = currFocusedTable.find('.editor-ui-table-valtr');
                     var selectedRows = currFocusedTable.find('tr.'+trSelectClass);
                     var minLength = Number( currFocusedTable.attr('data-min-length') );
@@ -413,6 +440,9 @@
 
             if ( parseTable.length > 1 || (parseTable[0] || []).length > 1 )  {
 
+                if ( parseTable.length == 2 && parseTable[1][0].trim() == '' ) {
+                    return ;
+                }
                 trs.each(function( i ){
                     var tds = $(this).children('td'),
                         currLine = parseTable[ i ];
@@ -433,12 +463,12 @@
         // Click input then select all
         var tmo;
 
-        container.delegate('tr.editor-ui-table-valtr input', 'focus', function(){
+        container.delegate('tr.editor-ui-table-valtr input', 'focus', function( e ){
             var self = this;
             clearTimeout(tmo);
             tmo = setTimeout(function(){
                 $(self).select();
-            }, 10);
+            }, 100);
         }).delegate('tr.editor-ui-table-valtr input', 'mousedown', function( e ){
             if ( e.ctrlKey ) {
                 e.preventDefault();
@@ -448,7 +478,7 @@
         // Unselect all tr
         container.click(function( e ){
             var currFocusedTable = self.currFocusedTable;
-            if ( e.ctrlKey && $(e.target).parents('table').index( currFocusedTable[0] ) == -1 ) {
+            if ( ( e.ctrlKey || ( isMac && e.altKey ) ) && $(e.target).parents('table').index( currFocusedTable[0] ) == -1 ) {
                 currFocusedTable.children('tbody').children('tr.'+trSelectClass).removeClass(trSelectClass);
             }
         });
