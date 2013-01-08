@@ -17,6 +17,8 @@
 
 
 .editor-ui-array-item { position: relative; padding-left:20px; }
+	.editor-ui-array-item-list > .editor-ui-array-item { counter-increment:itemcount; }
+	.editor-ui-array-item:before { display: block; content: counter(itemcount); position: absolute; top: 0; left: 0; }
 	.editor-ui-options { display:block; position:absolute; top:4%; left:0; height: 92%; width:16px; }
 		.editor-ui-options:before { display:block; content:''; position:absolute; left:7px; top:0; height: 100%; width:6px; border:1px solid #ddd; border-right:0; }
 		.editor-ui-option-item { display:block; height:30px; width:100%; line-height:31px; position:absolute; top:50%; left:0; cursor:pointer; background: #fff; color:#ddd; font-size:13px; text-align:left; }

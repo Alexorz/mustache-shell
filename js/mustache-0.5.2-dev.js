@@ -21,7 +21,7 @@ var Mustache;
 
   exports.name = "mustache.js";
   exports.version = "0.5.2";
-  exports.tags = ["[[", "]]"];
+  exports.tags = ["{{", "}}"];
   exports.testing = false;
 
   exports.parse = parse;

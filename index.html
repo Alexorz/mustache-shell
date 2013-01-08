@@ -2,11 +2,10 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <title>MustComb - Demo</title>
+    <title>Mustache-shell - Demo</title>
 
     <link rel="stylesheet" href="./css/chico-min-0.11.1.css">
     <link rel="stylesheet" href="./css/chico-mesh.css">
-    <link rel="stylesheet" href="./css/qunit.css">
     <link rel="stylesheet" href="./css/editor-ui.css">
 
 
@@ -19,14 +18,22 @@
     <script type="text/javascript" src="./js/mustcomb/editor-ui-tpl.js" ></script>
     <script type="text/javascript" src="./js/mustcomb/editor-ui.js" ></script>
     <script type="text/javascript" src="./js/js-beautify.js" ></script>
-    <script type="text/javascript" src="./js/qunit.js" ></script>
 
     <style type="text/css">
         .icon-blue { color:#60a7f1; }
         .icon-green { color:#A4C639; }
         .icon-light-gray { color:#ddd; }
 
-        .page-title { font-size:30px; padding: 20px 0 15px 0; margin-bottom:25px; border-bottom:1px solid #ccc; }
+        .page-title { position: relative; padding: 20px 0 15px 0; margin-bottom:25px; border-bottom:1px solid #ccc; }
+        .page-title .main-title { font-size:30px; }
+        .page-title .sub-title { text-indent: 10px; font-size:12px; color: #aaa; }
+        .page-title .sub-title em { color: #555; font-style: normal; }
+        .page-title .control-box { position: absolute; bottom: 15px; right: 0; }
+        .page-title   .extra-info-control { float: right; cursor: pointer; }
+        .page-title     .extra-info-control i { color: #aaa; }
+        .page-title     .show-extra-info i { color: #0637B3; }
+        .page-title   .key-demo-helper    { clear: both; font-size: 14px; float: right; white-space: nowrap; }
+
 
         .flow-menu { max-width:none; margin-bottom:20px; }
         .test-suites-box { padding-bottom:20px; }
@@ -41,11 +48,27 @@
         .test-case-gene,
         .test-case-gene:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial, "微软雅黑"; }
         pre { font-family: Consolas, Arial, "微软雅黑"; font-size: 11px; }
+
     </style>
 
 </head>
 <body>
-    <h1 class="page-title">MustComb Demo</h1>
+    <div class="page-title">
+        <h1 class="main-title">Mustache-shell Demo</h1>
+        <h2 class="sub-title">[ <em>Template</em> + <del>JSON</del> <em>Form</em> = <em>HTML</em> ]</h2>
+        
+        <div class="control-box">
+            <span class="extra-info-control" id="J-extra-info-control">
+                <i class="ch-icon-info-sign"></i>Toggle extra info
+            </span>
+
+            <span class="key-demo-helper">
+                View some key demos: 
+                <select id="J-key-demo-select">
+                </select>
+            </span>
+        </div>
+    </div>
 
     <ul class="flow-menu ch-menu" role="navigation">
         <li class="ch-expando">
@@ -54,7 +77,7 @@
                 <textarea id="tpl-input" class="tpl-input"></textarea>
             </div>
         </li>
-        <li class="ch-expando">
+        <li class="ch-expando" style="display:none;">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Info</h2>
             <div class="content-wrap">
                 <pre class="data-json-info-box" id="data-json-info-box">
@@ -62,7 +85,7 @@
                 </pre>
             </div>
         </li>
-        <li class="ch-expando">
+        <li class="ch-expando" style="display:none;">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Demo</h2>
             <div class="content-wrap">
                 <pre class="data-json-demo-box" id="data-json-demo-box">
@@ -70,7 +93,7 @@
                 </pre>
             </div>
         </li>
-        <li class="ch-expando">
+        <li class="ch-expando" style="display:none;">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Structure JSON</h2>
             <div class="content-wrap">
                 <pre class="form-struct-json-box" id="form-struct-json-box">
@@ -86,7 +109,7 @@
                 </div>
             </div>
         </li>
-        <li class="ch-expando">
+        <li class="ch-expando" style="display:none;">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
             <div class="content-wrap">
                 <textarea id="form-data-json" class="form-data-json"></textarea>
@@ -100,244 +123,330 @@
                 </div>
             </div>
         </li>
-        <li class="ch-expando">
+        <!-- <li class="ch-expando">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Generate Case Data:</h2>
             <div class="content-wrap">
                 <textarea class="test-case-gene" id="test-case-gene"></textarea>
             </div>
-        </li>
+        </li> -->
     </ul>
 
 
-    <h1 class="page-title" id="test-suite">Test Suite</h1>
-    <div class="test-suites-box">
-        <div id="qunit"></div>
-    </div>
-
     <script type="text/javascript">
-        // Chico UI init
+        // UI init
         $(".ch-menu").menu().select(1).select(5).select(7);
 
-        window['TEST_CASES'] = [
-            {
-                muTplStr : '',
-                muStruct : '{"key":null,"type":"object","meta":{},"value":{}}'
-            },
-            {
-                muTplStr : '{{field1}}',
-                muStruct : '{"id":4,"parentId":null,"key":null,"type":"object","meta":{},"value":{"field1":{"id":5,"parentId":4,"key":"field1","type":"string","meta":{},"value":""}}}'
-            },
-            {
-                muTplStr : '{{!meta=[ name:"名字1", length:1 ]}}{{field1}} {{!meta=[ name:"名字2" ]}}{{field1}}',
-                muStruct : '{"key":null,"type":"object","meta":{},"value":{"field1":{"key":"field1","type":"string","meta":{"name":"名字2","length":1},"value":""}}}'
-            },
-            {
-                "muTplStr": "{{!meta=[ name:\"名字1\", type:'array', length:1 ]}}\n{{#list}}\n   {{!meta=[ name:\"字段11\" ]}}\n   {{field1}}\n   {{!meta=[ type:'array', length:2 ]}}\n   {{#list}}\n      {{!meta=[ name:\"字段12\" ]}}\n      {{field1}}\n   {{/list}}\n{{/list}}\n\n{{#list}}\n   {{field2}}\n   {{#list}}\n      {{field3}}\n   {{/list}}\n{{/list}}",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"name\":\"名字1\",\"type\":\"array\",\"length\":1},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段11\"},\"value\":\"\"},\"list\":{\"key\":\"list\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":2},\"value\":{\"field1\":{\"key\":\"field1\",\"type\":\"string\",\"meta\":{\"name\":\"字段12\"},\"value\":\"\"},\"field3\":{\"key\":\"field3\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"field2\":{\"key\":\"field2\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}"
-            },
-            {
-                "description": "三级类目树1",
-                "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasSubCate_}}\nfunction(){\n  return typeof this.cateList == 'array';\n}\n{{/_hasSubCate_}}\n\n<ul>\n    {{!meta=[ name:\"一级类目\", type:'array', subNameMap:{ cateName:'一级类目名', cateLink:'一级类目链接' } ]}}\n    {{#cateList}}\n    <li>\n        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n        {{#_hasSubCate_}}\n        <ul>\n            {{!meta=[ name:\"二级类目\", type:'array', length:2, subNameMap:{ cateName:'二级类目名', cateLink:'二级类目链接' }  ]}}\n            {{#cateList}}\n            <li>\n                <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                {{#_hasSubCate_}}\n                <ul>\n                    {{!meta=[ name:\"三级类目\", type:'array', subNameMap:{ cateName:'三级类目名', cateLink:'三级类目链接' }  ]}}\n                    {{#cateList}}\n                    <li>\n                        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                    </li>\n                    {{/cateList}}\n                </ul>\n                {{/_hasSubCate_}}\n            </li>\n            {{/cateList}}\n        </ul>\n        {{/_hasSubCate_}}\n     </li>\n    {{/cateList}}\n</ul>\n",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
-                "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}"
-            },
-            {
-                "description": "三级类目树2",
-                "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasSubCate_}}\nfunction(){\n  return typeof this.cateList == 'array';\n}\n{{/_hasSubCate_}}\n\n<ul>\n    {{!meta=[ name:\"一级类目\", type:'array', subNameMap:{ cateName:'一级类目名', cateLink:'一级类目链接' } ]}}\n    {{#cateList}}\n    <li>\n        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n        {{#_hasSubCate_}}\n        <ul>\n            {{!meta=[ name:\"二级类目\", type:'array', length:2, subNameMap:{ cateName:'二级类目名', cateLink:'二级类目链接' }  ]}}\n            {{#cateList}}\n            <li>\n                <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                {{#_hasSubCate_}}\n                <ul>\n                    {{!meta=[ name:\"三级类目\", type:'array', subNameMap:{ cateName:'三级类目名', cateLink:'三级类目链接' }  ]}}\n                    {{#cateList}}\n                    <li>\n                        <a href=\"{{cateLink}}\" class=\"cate-name\">{{cateName}}</a>\n                    </li>\n                    {{/cateList}}\n                </ul>\n                {{/_hasSubCate_}}\n            </li>\n            {{/cateList}}\n        </ul>\n        {{/_hasSubCate_}}\n     </li>\n    {{/cateList}}\n</ul>\n",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"一级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"二级类目名\"},\"value\":\"\"},\"cateList\":{\"key\":\"cateList\",\"type\":\"object\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"value\":{\"cateLink\":{\"key\":\"cateLink\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目链接\"},\"value\":\"\"},\"cateName\":{\"key\":\"cateName\",\"type\":\"string\",\"meta\":{\"name\":\"三级类目名\"},\"value\":\"\"}}}}}}}}}",
-                "demoJSON": "{\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]},{\"cateLink\":\"\",\"cateName\":\"\",\"cateList\":[{\"cateLink\":\"\",\"cateName\":\"\"}]}]}]}",
-                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"一级类目\",\"type\":\"array\",\"meta\":{\"name\":\"一级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"一级类目名\",\"cateLink\":\"一级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"一级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"一级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"一级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"二级类目\",\"type\":\"array\",\"meta\":{\"name\":\"二级类目\",\"type\":\"array\",\"length\":2,\"subNameMap\":{\"cateName\":\"二级类目名\",\"cateLink\":\"二级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"二级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"二级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"二级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"cateList\",\"name\":\"三级类目\",\"type\":\"array\",\"meta\":{\"name\":\"三级类目\",\"type\":\"array\",\"subNameMap\":{\"cateName\":\"三级类目名\",\"cateLink\":\"三级类目链接\"}},\"subProp\":[{\"key\":\"cateLink\",\"name\":\"三级类目链接\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目链接\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"cateName\",\"name\":\"三级类目名\",\"type\":\"prop\",\"meta\":{\"name\":\"三级类目名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}]}"
-            },
-            {
-                "description": "",
-                "muTplStr": "\n{{!meta=[ type:'array', length:3 ]}}\n{{#Array-E}}\n  {{Sub-Prop-A}}\n  {{Sub-Prop-B}}\n  {{Sub-Prop-C}}\n  {{!meta=[ type:'object' ]}}\n  {{#Sub-Object-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n\t{{!meta=[ type:'array' ]}}\n\t{{#Sub-Sub-Array-A}}\n\t  {{Sub-Sub-Sub-Prop-A}}\n\t  {{Sub-Sub-Sub-Prop-B}}\n\t  {{Sub-Sub-Sub-Prop-C}}\n\t{{/Sub-Sub-Array-A}}\n\t{{!meta=[ type:'array' ]}}\n  {{/Sub-Object-A}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Array-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n  {{/Sub-Array-A}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Array-B}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n    {{!meta=[ type:'object' ]}}\n    {{#Sub-Sub-Sub-Object-A}}\n      {{Sub-Sub-Sub-Sub-Prop-A}}\n      {{Sub-Sub-Sub-Sub-Prop-B}}\n      {{Sub-Sub-Sub-Sub-Prop-C}}\n  {{!meta=[ type:'array' ]}}\n  {{#Sub-Sub-Array-A}}\n    {{Sub-Sub-Sub-Prop-A}}\n    {{Sub-Sub-Sub-Prop-B}}\n    {{Sub-Sub-Sub-Prop-C}}\n      {{!meta=[ type:'array' ]}}\n      {{#Sub-Sub-Sub-Array-A}}\n        {{Sub-Sub-Sub-Sub-Prop-A}}\n        {{Sub-Sub-Sub-Sub-Prop-B}}\n        {{Sub-Sub-Sub-Sub-Prop-C}}\n      {{/Sub-Sub-Sub-Array-A}}\n  {{/Sub-Sub-Array-A}}\n    {{/Sub-Sub-Sub-Object-A}}\n  {{/Sub-Array-B}}\n{{/Array-E}}",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"Array-E\":{\"key\":\"Array-E\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":3},\"value\":{\"Sub-Prop-A\":{\"key\":\"Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Prop-B\":{\"key\":\"Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Prop-C\":{\"key\":\"Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Object-A\":{\"key\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}},\"Sub-Array-A\":{\"key\":\"Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}},\"Sub-Array-B\":{\"key\":\"Sub-Array-B\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Object-A\":{\"key\":\"Sub-Sub-Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"value\":{\"Sub-Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\"},\"value\":{\"Sub-Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}}}}}}}}}",
-                "demoJSON": "{\"Array-E\":[{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]},{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]},{\"Sub-Prop-A\":\"\",\"Sub-Prop-B\":\"\",\"Sub-Prop-C\":\"\",\"Sub-Object-A\":{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},\"Sub-Array-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\"}],\"Sub-Array-B\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Object-A\":{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Sub-Prop-C\":\"\"}]}]}}]}]}",
-                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"Array-E\",\"name\":\"Array-E\",\"type\":\"array\",\"meta\":{\"type\":\"array\",\"length\":3},\"subProp\":[{\"key\":\"Sub-Prop-A\",\"name\":\"Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Prop-B\",\"name\":\"Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Prop-C\",\"name\":\"Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[{\"key\":\"Sub-Object-A\",\"name\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}],\"subArray\":[{\"key\":\"Sub-Array-A\",\"name\":\"Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Array-B\",\"name\":\"Sub-Array-B\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[{\"key\":\"Sub-Sub-Sub-Object-A\",\"name\":\"Sub-Sub-Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\"},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}],\"subArray\":[]}]}]}"
-            },
-            {
-                "description": "",
-                "muTplStr": "\n{{!meta=[ type:'array', length:3, maxLength:4, minLength:2 ]}}\n  {{#Sub-Object-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n\t{{!meta=[ type:'object', length:3, maxLength:4, minLength:2 ]}}\n\t{{#Sub-Sub-Array-A}}\n\t  {{Sub-Sub-Sub-Prop-A}}\n\t  {{Sub-Sub-Sub-Prop-B}}\n\t  {{Sub-Sub-Sub-Prop-C}}\n\t{{/Sub-Sub-Array-A}}11\n\t{{!meta=[ type:'array' ]}}\n  {{/Sub-Object-A}}",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"Sub-Object-A\":{\"key\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}}}",
-                "demoJSON": "{\"Sub-Object-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}},{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}},{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}}]}",
-                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Object-A\",\"name\":\"Sub-Object-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"object\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}],\"subArray\":[]}]}"
-            },
-            {
-                "description": "",
-                "muTplStr": "\n{{!meta=[ type:'array', length:3, maxLength:4, minLength:2 ]}}\n  {{#Sub-Object-A}}\n    {{Sub-Sub-Prop-A}}\n    {{Sub-Sub-Prop-B}}\n    {{Sub-Sub-Prop-C}}\n\t{{!meta=[ type:'array', length:3, maxLength:4, minLength:2 ]}}\n\t{{#Sub-Sub-Array-A}}\n\t  {{Sub-Sub-Sub-Prop-A}}\n\t  {{Sub-Sub-Sub-Prop-B}}\n\t  {{Sub-Sub-Sub-Prop-C}}\n\t{{/Sub-Sub-Array-A}}11\n\t{{!meta=[ type:'array' ]}}\n  {{/Sub-Object-A}}",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"Sub-Object-A\":{\"key\":\"Sub-Object-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"value\":{\"Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Array-A\":{\"key\":\"Sub-Sub-Array-A\",\"type\":\"object\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"value\":{\"Sub-Sub-Sub-Prop-A\":{\"key\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-B\":{\"key\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"string\",\"meta\":{},\"value\":\"\"},\"Sub-Sub-Sub-Prop-C\":{\"key\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"string\",\"meta\":{},\"value\":\"\"}}}}}}}",
-                "demoJSON": "{\"Sub-Object-A\":[{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]},{\"Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Prop-C\":\"\",\"Sub-Sub-Array-A\":[{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"},{\"Sub-Sub-Sub-Prop-A\":\"\",\"Sub-Sub-Sub-Prop-B\":\"\",\"Sub-Sub-Sub-Prop-C\":\"\"}]}]}",
-                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Object-A\",\"name\":\"Sub-Object-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"subProp\":[{\"key\":\"Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[{\"key\":\"Sub-Sub-Array-A\",\"name\":\"Sub-Sub-Array-A\",\"type\":\"array\",\"meta\":{\"type\":\"array\",\"length\":3,\"maxLength\":4,\"minLength\":2,\"isArray\":true},\"subProp\":[{\"key\":\"Sub-Sub-Sub-Prop-A\",\"name\":\"Sub-Sub-Sub-Prop-A\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-B\",\"name\":\"Sub-Sub-Sub-Prop-B\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"Sub-Sub-Sub-Prop-C\",\"name\":\"Sub-Sub-Sub-Prop-C\",\"type\":\"prop\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}]}"
-            },
-            {
-                "description": "",
-                "muTplStr": "{{!meta=[ type:'func' ]}}\n{{#_hasChild_}}\nfunction(){\n    return !!this.cateList && !!this.cateList.length;\n}\n{{/_hasChild_}}\n<div class=\"omod-p-list-carousel\">\n\t<a class=\"prev-btn\" href=\"javascript:void(0)\"  hidefocus=\"true\"></a>\n    <a class=\"next-btn\" href=\"javascript:void(0)\"  hidefocus=\"true\"></a>\n        <div class=\"carousel-main\" id=\"carousel-main\">\n            <div class=\"carousell-con\">\n                <ul class=\"carousell-item clearfix\">\n                    {{!meta=[  name:'产品列表', type:'array', length:8, subNameMap:{ storeDetailURL:'产品链接URL', summImageURL:'产品图片URL', discount:'折扣', isNewArrival:'是否为新品', name:'产品名',xxx:'12', newMinPrice:'现价', save:'立省金额', packageType:'单位', freeShipping:'是否免运费', isSoldout:'是否售空', subNameMap:{ discount:'折扣' } } ]}}\n                    {{#productList}}\n                    <li class=\"g-items g-items-general\">\n                        <div class=\"g-pic\">\n                            <a href=\"{{storeDetailURL}}\">\n                                <img src=\"{{summImageURL}}\">\n                            </a>\n                            {{#discount}}\n                                <span class=\"g-discount\">{{discount}}{{xxx}}% OFF</span>\n                            {{/discount}}\n                            {{#isNewArrival}}\n                                <span class=\"g-newarrival\">New Arrival</span>\n                            {{/isNewArrival}}\n                        </div>\n                        <div class=\"g-detail\">\n                            <span class=\"g-name\"><a title=\"{{name}}\" href=\"{{storeDetailURL}}\">{{name}}</a></span>\n                            <span class=\"g-price\"><em>US ${{newMinPrice}}</em> / {{packageType}}</span>\n                            <span class=\"g-save\">Save: US ${{save}}</span>\n                            <span class=\"g-freeshipping\">1\n                            {{#freeShipping}}\n                                Free Shipping\n                            {{/freeShipping}}\n                            </span>\n                        </div>\n                        {{#isSoldout}}\n                        <span class=\"g-soldout\"></span>\n                        {{/isSoldout}}\n                    </li>\n                    {{/productList}}\n                </ul>\n            </div>    \n        </div>\n</div>\n\t\t\t\t\t\t\n\t\t\t\t\t\t",
-                "muStruct": "{\"key\":null,\"type\":\"object\",\"meta\":{},\"value\":{\"productList\":{\"key\":\"productList\",\"type\":\"object\",\"meta\":{\"name\":\"产品列表\",\"type\":\"array\",\"length\":8,\"subNameMap\":{\"storeDetailURL\":\"产品链接URL\",\"summImageURL\":\"产品图片URL\",\"discount\":\"折扣\",\"isNewArrival\":\"是否为新品\",\"name\":\"产品名\",\"xxx\":\"12\",\"newMinPrice\":\"现价\",\"save\":\"立省金额\",\"packageType\":\"单位\",\"freeShipping\":\"是否免运费\",\"isSoldout\":\"是否售空\",\"subNameMap\":{\"discount\":\"折扣\"}}},\"value\":{\"storeDetailURL\":{\"key\":\"storeDetailURL\",\"type\":\"string\",\"meta\":{\"name\":\"产品链接URL\"},\"value\":\"\"},\"summImageURL\":{\"key\":\"summImageURL\",\"type\":\"string\",\"meta\":{\"name\":\"产品图片URL\"},\"value\":\"\"},\"discount\":{\"key\":\"discount\",\"type\":\"string\",\"meta\":{\"name\":\"折扣\"},\"value\":\"\"},\"xxx\":{\"key\":\"xxx\",\"type\":\"string\",\"meta\":{\"name\":\"12\"},\"value\":\"\"},\"isNewArrival\":{\"key\":\"isNewArrival\",\"type\":\"string\",\"meta\":{\"name\":\"是否为新品\"},\"value\":\"\"},\"name\":{\"key\":\"name\",\"type\":\"string\",\"meta\":{\"name\":\"产品名\"},\"value\":\"\"},\"newMinPrice\":{\"key\":\"newMinPrice\",\"type\":\"string\",\"meta\":{\"name\":\"现价\"},\"value\":\"\"},\"packageType\":{\"key\":\"packageType\",\"type\":\"string\",\"meta\":{\"name\":\"单位\"},\"value\":\"\"},\"save\":{\"key\":\"save\",\"type\":\"string\",\"meta\":{\"name\":\"立省金额\"},\"value\":\"\"},\"freeShipping\":{\"key\":\"freeShipping\",\"type\":\"string\",\"meta\":{\"name\":\"是否免运费\"},\"value\":\"\"},\"isSoldout\":{\"key\":\"isSoldout\",\"type\":\"string\",\"meta\":{\"name\":\"是否售空\"},\"value\":\"\"}}}}}",
-                "demoJSON": "{\"productList\":[{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"},{\"storeDetailURL\":\"\",\"summImageURL\":\"\",\"discount\":\"\",\"xxx\":\"\",\"isNewArrival\":\"\",\"name\":\"\",\"newMinPrice\":\"\",\"packageType\":\"\",\"save\":\"\",\"freeShipping\":\"\",\"isSoldout\":\"\"}]}",
-                "fmStruct": "{\"type\":\"object\",\"meta\":{},\"subProp\":[],\"subObject\":[],\"subArray\":[{\"key\":\"productList\",\"name\":\"产品列表\",\"type\":\"array\",\"meta\":{\"name\":\"产品列表\",\"type\":\"array\",\"length\":8,\"subNameMap\":{\"storeDetailURL\":\"产品链接URL\",\"summImageURL\":\"产品图片URL\",\"discount\":\"折扣\",\"isNewArrival\":\"是否为新品\",\"name\":\"产品名\",\"xxx\":\"12\",\"newMinPrice\":\"现价\",\"save\":\"立省金额\",\"packageType\":\"单位\",\"freeShipping\":\"是否免运费\",\"isSoldout\":\"是否售空\",\"subNameMap\":{\"discount\":\"折扣\"}}},\"subProp\":[{\"key\":\"storeDetailURL\",\"name\":\"产品链接URL\",\"type\":\"prop\",\"meta\":{\"name\":\"产品链接URL\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"summImageURL\",\"name\":\"产品图片URL\",\"type\":\"prop\",\"meta\":{\"name\":\"产品图片URL\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"discount\",\"name\":\"折扣\",\"type\":\"prop\",\"meta\":{\"name\":\"折扣\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"xxx\",\"name\":\"12\",\"type\":\"prop\",\"meta\":{\"name\":\"12\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"isNewArrival\",\"name\":\"是否为新品\",\"type\":\"prop\",\"meta\":{\"name\":\"是否为新品\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"name\",\"name\":\"产品名\",\"type\":\"prop\",\"meta\":{\"name\":\"产品名\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"newMinPrice\",\"name\":\"现价\",\"type\":\"prop\",\"meta\":{\"name\":\"现价\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"packageType\",\"name\":\"单位\",\"type\":\"prop\",\"meta\":{\"name\":\"单位\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"save\",\"name\":\"立省金额\",\"type\":\"prop\",\"meta\":{\"name\":\"立省金额\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"freeShipping\",\"name\":\"是否免运费\",\"type\":\"prop\",\"meta\":{\"name\":\"是否免运费\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]},{\"key\":\"isSoldout\",\"name\":\"是否售空\",\"type\":\"prop\",\"meta\":{\"name\":\"是否售空\"},\"subProp\":[],\"subObject\":[],\"subArray\":[]}],\"subObject\":[],\"subArray\":[]}]}"
-            }
-        ];
 
         (function(){
-            // Data Containers
-            var muArea        = $('#tpl-input'),
+
+            var ooxx = '=_-+',
+
+            /*
+             *  Configs
+             */
+            //
+                // Local Store
+                activeStorage = true && window.localStorage,
+                localStoreKey = 'Mustache_Shell_Demo_Cache',
+                localCache = {},
+                // Usage
+                responseBuffTime = 300,
+            // Events
+                Event = $(window),
+                events = (function(){
+                    var events = {},
+                    eventList = [
+                        'Mustache Template String Change',
+                        'Editor Form Structure Change',
+                        'Editor Form Data Change'
+                    ];
+
+                    for (var i = eventList.length - 1; i >= 0; i--) {
+                        events[ eventList[i] ] = 'Mustache_shell_demo_' + eventList[i].replace(/[^\w\d]+/gi,'_');
+                    };
+                    return events;
+                })(),
+
+            // Cache Vars
+                // Mustache template input area
+                muArea        = $('#tpl-input'),
+                // Mustache template string
+                muTplStr,
+
+                // JSON data info print
                 dataInfoBox   = $('#data-json-info-box'),
-                demoDataBox   = $('#data-json-demo-box'),
-                formStructBox = $('#form-struct-json-box'),
-                dataFormBox   = $('#data-form'),
-                formDataArea  = $('#form-data-json'),
-                renderResBox  = $('#render-result'),
-                caseDataArea  = $('#test-case-gene');
-            
-            // Data Cache
-            var dataInfo = window._MC_dataInfo = {};
-
-            var muTplStr,
+                // Mustache template structure description object
                 muStruct,
+
+                // demo JSON data print
+                demoDataBox   = $('#data-json-demo-box'),
+                // demo JSON data for current template
                 demoJSON,
+
+                // form structor description json print
+                formStructBox = $('#form-struct-json-box'),
+                // form structor description object
                 fmStruct,
+
+                // editor form container
+                dataFormBox   = $('#data-form'),
+                // editor form object
                 editorArea,
-                formData;
 
-            var activeStorage = false;
+                // form data output area
+                formDataArea  = $('#form-data-json'),
+                // form data object
+                formData,
 
+                // render result container
+                renderResBox  = $('#render-result'),
 
-            function init (  ) {
+                // case
+                caseDataArea  = $('#test-case-gene'),
 
-                Mustache.testing = 0;
-                mustComb.setMustache( Mustache );
-
-                muArea.keyup( mustacheCodeChange ).blur( mustacheCodeChange ).change( mustacheCodeChange ).trigger('keyup');
-                formDataArea.blur( formDataJsonChange ).trigger('blur');
-                caseDataArea.focus(function(){ var self = this; setTimeout(function(){ $(self).select() }, 100); });
-                dataFormBox.find('input').live('blur', formDataChange);
-
-                runCase();
-            }
-
-            // Event Handlers
-            function mustacheCodeChange ( ) {
-
-                dataInfo.muTplStr   = muTplStr   = muArea.val();
-                dataInfo.muStruct   = muStruct   = mustComb.parse( muTplStr );
-                dataInfo.demoJSON   = demoJSON   = mustComb.getDemoJSON( muTplStr );
-                dataInfo.fmStruct   = fmStruct   = mustComb.getFormStruct( muTplStr );
-                dataInfo.editorArea = editorArea = mustComb.buildEditorArea( muTplStr, dataFormBox );
-
-                dataInfoBox.html(
-                    beautifyJs( JSON.stringify( muStruct ) )
-                );
-
-                demoDataBox.html(
-                    beautifyJs( JSON.stringify( demoJSON ) )
-                );
-
-                formStructBox.html(
-                    beautifyJs( JSON.stringify( fmStruct ) )
-                );
-                
-                formDataChange();
-                formDataJsonChange();
-
-                storeMutpl();
-                storeFormData();
-                geneCaseData();
-            }
-
-            function formDataJsonChange() {
-                var jsonData;
-                try {
-                    jsonData = JSON.parse( formDataArea.val() || '{}' );
-                }
-                catch ( e ) {
-                    console.error( 'Form Data JSON Import - ' +  e );
-                }
-
-                editorArea.importData(
-                    jsonData || {}
-                );
-            }
-
-            function formDataChange() {
-                formDataArea.val(
-                    beautifyJs( JSON.stringify( editorArea.exportData() ) )
-                );
-            }
-
-            function geneCaseData () {
-                var caseData = {
-                    description : '',
-                    muTplStr    : muTplStr,
-                    muStruct    : JSON.stringify( muStruct ),
-                    demoJSON    : JSON.stringify( demoJSON ),
-                    fmStruct    : JSON.stringify( fmStruct )
+                // Data import function
+                importData = function( data ){
+                    Event.trigger( events['Mustache Template String Change'], { muTplStr : data.muTplStr || '', triggeredBy : 'Import Data' } );
+                    Event.trigger( events['Editor Form Data Change'], { formData : data.formData || {}, triggeredBy : 'Import Data' } );   
                 };
-                caseDataArea.val( beautifyJs( JSON.stringify( caseData ) ) );
-            }
-                
-            function resetMutpl () {
-                muArea.val( localStorage.getItem('muTplStr') || '' ).trigger('change');
-            }
 
-            function storeMutpl () {
+
+
+            // Init Mustache-shell
+            mustComb.setMustache( Mustache );
+
+            /*
+             * Events Binding && Triggering
+             */
+            //
+                // Trigger Mustache Template String Change Event
+                (function( tmo ){
+
+                    function checkMuTplChange(){
+                        if ( muTplStr != muArea.val() ) {
+                            Event.trigger( events['Mustache Template String Change'], { muTplStr : muArea.val(), triggeredBy : 'Mustache Area' } );
+                        }
+                    }
+
+                    muArea.on('blur', function(){
+
+                        clearTimeout( tmo );
+                        checkMuTplChange();
+
+                    }).on('keyup', function(){
+
+                        clearTimeout( tmo );
+                        tmo = setTimeout(function(){
+                            checkMuTplChange();
+                        }, responseBuffTime );
+                    });
+                })();
+
+
+                // Trigger Editor area data change
+                (function( tmo1, tmo2 ){
+
+                    function dataFormCheckChange( ){
+                        var tmpData = editorArea.exportData();
+                        if ( JSON.stringify( tmpData ) != JSON.stringify( formData ) ) {
+                            Event.trigger( events['Editor Form Data Change'], { formData : tmpData, triggeredBy : 'Editor Area' } );
+                        } 
+                    }
+
+                    dataFormBox.find('input').live('blur', function(){
+                        clearTimeout( tmo1 );
+                        dataFormCheckChange();
+
+                    }).live('keyup', function(){
+
+                        clearTimeout( tmo1 );
+                        tmo1 = setTimeout(function(){
+                            dataFormCheckChange();
+                        }, responseBuffTime );
+                    });
+
+                    function formDataAreaCheckChange(){
+                        var tmpData = JSON.parse( formDataArea.val() );
+                        if ( JSON.stringify( tmpData ) != JSON.stringify( formData ) ) {
+                            Event.trigger( events['Editor Form Data Change'], { formData : tmpData, triggeredBy : 'Form Data Area' } );
+                        } 
+                    }
+
+                    formDataArea.on('blur', function(){
+                        clearTimeout( tmo1 );
+                        formDataAreaCheckChange();
+
+                    }).on('keyup', function(){
+
+                        clearTimeout( tmo1 );
+                        tmo1 = setTimeout(function(){
+                            formDataAreaCheckChange();
+                        }, responseBuffTime );
+                    });
+                })();
+
+                // When Mustache Template String Change
+                Event.bind( events['Mustache Template String Change'], function( e, args ){
+
+                    // Update Mustache template cache
+                    muTplStr   = args.muTplStr;
+
+                    // Update Mustache template input area
+                    if ( args.triggeredBy != 'Mustache Area' ) {
+                        muArea.val( muTplStr );
+                    }
+
+                    // Check if the structure of Mustache template has changed
+                    var muStructTmp = mustComb.parse( muTplStr );
+                    if ( JSON.stringify( muStructTmp ) != JSON.stringify( muStruct ) ) {
+                        Event.trigger( events['Editor Form Structure Change'], { muStruct : muStructTmp } );
+                    }
+                });
+
+                // When Editor Form Structure was been changed
+                Event.bind( events['Editor Form Structure Change'], function( e, args ){
+
+                    // Update Mustache template structure cache
+                    muStruct   = args.muStruct;
+                    dataInfoBox.text(
+                        beautifyJs( JSON.stringify( muStruct ) )
+                    );
+
+                    // Update demo JSON of current template
+                    demoJSON   = mustComb.getDemoJSON( muTplStr );
+                    demoDataBox.text(
+                        beautifyJs( JSON.stringify( demoJSON ) )
+                    );
+
+                    // Update form structure
+                    fmStruct   = mustComb.getFormStruct( muTplStr );
+                    formStructBox.text(
+                        beautifyJs( JSON.stringify( fmStruct ) )
+                    );
+
+                    // Update editor form obj
+                    editorArea = mustComb.buildEditorArea( muTplStr, dataFormBox );
+                    // Reimport current date into editor area
+                    editorArea.importData(
+                        formData || {}
+                    );
+
+                    // Update form data json print
+                    formData = editorArea.exportData();
+                    formDataArea.val(
+                        beautifyJs( JSON.stringify( formData ) )
+                    );
+
+                });
+
+                // When Editor Form Data was been changed
+                Event.bind( events['Editor Form Data Change'], function( e, args ){
+
+                    // Update form data
+                    formData = args.formData;
+
+                    // Update editor area form inputs when data is updated by another module.
+                    if ( args.triggeredBy != 'Editor Area' ) {
+                        editorArea.importData( formData );
+                    }
+
+                    // Update form data area when data is updated by another module.
+                    if ( args.triggeredBy != 'Form Data Area' ) {
+                        formDataArea.val(
+                            beautifyJs( JSON.stringify( formData ) )
+                        );
+                    }
+
+                });
+
+                // When to rerender HTML
+                Event.bind( [
+                    events['Mustache Template String Change'],
+                    events['Editor Form Data Change']
+                ].join(' '), function(){
+                    // Rerender HTML
+                    renderResBox.html(
+                        mustComb.render( muTplStr, formData )
+                    );
+                });
+
+                // Init Local Cache
                 if ( activeStorage ) {
-                    localStorage.setItem('muTplStr', muArea.val() );
+
+                    // Refresh Cache with Local Cache
+                    try{
+                        localCache = JSON.parse( localStorage.getItem( localStoreKey ) || '{}' );
+                    }catch( e ) {
+                        localCache = {};
+                    }
+                    muTplStr = localCache.muTplStr;
+                    formData = localCache.formData;
+
+                    // Cache custom input
+                    Event.bind( [
+                        events['Mustache Template String Change'],
+                        events['Editor Form Data Change']
+                    ].join(' '), function( e, args ){
+                        if ( args.triggeredBy != 'Import Data' ) {
+                            localCache.muTplStr = muTplStr;
+                            localCache.formData = formData;
+                            localStorage.setItem( localStoreKey, JSON.stringify( localCache ) );
+                        }
+                    });
                 }
-            }
-                
-            function resetFormData () {
-                formDataArea.val( localStorage.getItem('muFormData') || '' ).trigger('change');
-            }
 
-            function storeFormData () {
-                if ( activeStorage ) {
-                    localStorage.setItem('muFormData', formDataArea.val() );
-                }
-            }
+            // Import defaut data
+            importData({
+                muTplStr : muTplStr || 'Alexorz is a {{role}}.',
+                formData : formData || { role : 'Coder' }
+            });
+            
 
+            // Init key demo helper
+            var keyDemoList = [
+                    {
+                        name : 'Hello world',
+                        muTplStr : 'Alexorz is a {{role}}.',
+                        formData : { role : 'Coder' }
+                    },
+                    {
+                        name : 'Array',
+                        muTplStr : '{{!meta=[ type:"array" ]}}\n{{#words}}\n  {{someone}} is a {{role}}.<br />\n{{/words}}',
+                        formData : { words : [ { someone : 'Alexorz', role: 'Coder' }, { someone : 'Jackie', role: 'Actor' } ] }
+                    },
+                    {
+                        name : 'Object',
+                        muTplStr : '{{!meta=[ type:"object" ]}}\n{{#word}}\n  {{someone}} is a {{role}}.\n{{/word}}',
+                        formData : { word : { someone : 'Alexorz', role: 'Coder' } }
+                    },
+                    {
+                        name : 'Name',
+                        muTplStr : '{{!meta=[ name:"What kind of people" ]}}\nAlexorz is a {{role}}.',
+                        formData : { role : 'Coder' }
+                    }
 
-            function runCase () {
-                var cases = window['TEST_CASES'];
-                for (var i = 0, l = cases.length; i < l; i++) {
-                    (function( currCase, isLast ){
-                        test( currCase.description || '', function(){
-                            muArea.val( currCase.muTplStr ).trigger('keyup');
+                ],
+                keyDemoSelect = $('#J-key-demo-select');
 
-                            deepEqual(
-                                JSON.parse( dataInfo.muStruct.stringify() ),
-                                JSON.parse( dataInfo.muStruct.stringify.call( JSON.parse( currCase.muStruct ) ) ),
-                                'Template Structure Match'
-                            );
-
-                            if ( currCase.demoJSON ) {
-                                deepEqual(
-                                    dataInfo.demoJSON,
-                                    JSON.parse( currCase.demoJSON ),
-                                    'Data JSON Demo Match'
-                                );
-                            }
-
-                            if ( currCase.fmStruct ) {
-                                deepEqual(
-                                    dataInfo.fmStruct,
-                                    JSON.parse( currCase.fmStruct ),
-                                    'Form Structure Match'
-                                );
-                            }
-
-                            
-                            if ( isLast ) {
-                                activeStorage = true;
-                                resetMutpl();
-                                resetFormData();
-                                geneCaseData();
-                            }
-                        });
-                    })( cases[i], i+1 == l );
-                };
+            for (var i = 0; i < keyDemoList.length; i++) {
+                var curr = keyDemoList[i];
+                keyDemoSelect.append('<option value="'+ i +'">'+ curr.name +'</option>');
             }
 
-            init();
+            keyDemoSelect.change(function(){
+                importData( keyDemoList[ Number(this.value) || 0 ] );
+            });
+
+
+            // Toggle extra info
+            $('#J-extra-info-control').click(function(){
+                $(this).toggleClass('show-extra-info');
+                dataInfoBox.parents('.ch-expando').toggle();
+                demoDataBox.parents('.ch-expando').toggle();
+                formStructBox.parents('.ch-expando').toggle();
+
+                return false;
+            });
 
         })();
 
