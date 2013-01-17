@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <title>Mustache-shell - Demo</title>
+    <title>Mustache-shell</title>
 
     <link rel="stylesheet" href="./css/chico-min-0.11.1.css">
     <link rel="stylesheet" href="./css/chico-mesh.css">
@@ -18,25 +18,68 @@
     <script type="text/javascript" src="./js/mustcomb/editor-ui-tpl.js" ></script>
     <script type="text/javascript" src="./js/mustcomb/editor-ui.js" ></script>
     <script type="text/javascript" src="./js/js-beautify.js" ></script>
+    <script type="text/javascript" src="./js/sea.js" ></script>
 
     <style type="text/css">
-        .icon-blue { color:#60a7f1; }
-        .icon-green { color:#A4C639; }
-        .icon-light-gray { color:#ddd; }
 
-        .page-title { position: relative; padding: 20px 0 15px 0; margin-bottom:25px; border-bottom:1px solid #ccc; }
-        .page-title .main-title { font-size:30px; }
-        .page-title .sub-title { text-indent: 10px; font-size:12px; color: #aaa; }
-        .page-title .sub-title em { color: #555; font-style: normal; }
-        .page-title .control-box { position: absolute; bottom: 15px; right: 0; }
-        .page-title   .extra-info-control { float: right; cursor: pointer; }
-        .page-title     .extra-info-control i { color: #aaa; }
-        .page-title     .show-extra-info i { color: #0637B3; }
-        .page-title   .key-demo-helper    { clear: both; font-size: 14px; float: right; white-space: nowrap; }
+        body { padding-bottom: 200px; }
 
+        @-webkit-keyframes focuserFadeToggle {
+            0%   { border-color: #fff; }
+            24%  { border-color: #fff; }
+            25%  { border-color: #aaa; }
+            75%  { border-color: #aaa; }
+            76%  { border-color: #fff; }
+            100% { border-color: #fff; }
+        }
+
+
+        .ch-expando-trigger:after { display: none; }
+
+        .page-title { position: relative; height: 50px; padding: 20px 0 15px 0; border-bottom:1px solid #ccc; }
+        .page-title   .navi-bar { position: relative; z-index: 10; width: 100%; overflow: hidden; padding: 12px 0; background: #fff; cursor: default; -webkit-box-shadow: white 0px 6px 20px 0px; box-shadow: white 0px 6px 20px 0px; }
+        .page-title     .main-title { display: block; float: left; height: 35px; margin: 0;          padding: 0 0 0 0; font-size:38px; line-height: 38px; vertical-align: middle; }
+        .page-title     .sub-title  { display: block; float: left; height: 25px; margin: 0 0 0 50px; padding: 10px 0 0 0; font-size:18px; color: #aaa; line-height: 23px; }
+        .page-title       .sub-title a  { display: inline-block; height: 23px; margin: 0 5px; border: 1px solid #fff; }
+        .page-title       .sub-title a:hover { text-decoration: none; }
+        .page-title       .sub-title   em { color: #555; font-style: normal; }
+        .page-title       .sub-title   i  { color: #bbb; font-style: normal; font-weight: bold; }
+        .page-title       .sub-title   .doup-form { border-color: #bbb; border-radius: 3px; padding: 0 3px 0 1px; }
+        .page-title       .sub-title   .doup-form em { padding-left: 4px; }
+        .page-title       .sub-title   .doup-tmpl:hover i { font-weight: bold; color: #60A7F1; }
+        .page-title       .sub-title   .doup-form i { font-size: 16px; margin-left: 1px; border-left: 1px solid #aaa; color: #fff; -webkit-animation: focuserFadeToggle 1.3s infinite; }
+        .page-title       .sub-title   .doup-form:hover { border-color: #F69355; box-shadow: 0 0 2px 0 #F69355 inset; }
+        .page-title       .sub-title   .doup-html:hover i { color: #A4C639; }
+        .page-title       .sub-title   .doup-json { text-decoration: line-through; color: #555; }
+        .page-title       .sub-title   .doup-json:hover i { color: #F69355; }
+        .page-title     .control-box  { position: absolute; bottom: 12px; right: 0; }
+        .page-title       .key-demo-helper    { font-size: 14px; white-space: nowrap; }
+/*        .page-title       .extra-info-control { cursor: pointer; }
+        .page-title       .extra-info-control i { color: #aaa; }
+        .page-title       .show-extra-info i { color: #0637B3; }*/
+
+
+        .icon-blue       { color: #60a7f1; }
+        .icon-orange     { color: #F69355; }
+        .icon-green      { color: #A4C639; }
+        .icon-light-gray { color: #ddd;    }
 
         .flow-menu { max-width:none; margin-bottom:20px; }
-        .test-suites-box { padding-bottom:20px; }
+        .flow-menu .ch-expando-trigger [class*="icon-"],
+        .flow-menu .ch-expando-trigger [class*="icon-"]:before { display: inline-block; margin-right: 0; width: 27px; height: 27px; text-align: center; line-height: 1.2em; }
+        .flow-menu .ch-expando-trigger-on .icon-blue,
+        .flow-menu .ch-expando-trigger-on .icon-orange { -webkit-transform: rotate( 45deg ); }
+        .flow-menu .ch-expando-trigger    .icon-blue,
+        .flow-menu .ch-expando-trigger    .icon-orange { -webkit-transition: all 0.2s; }
+        
+        .flow-menu [class*="doup-"] i,
+        .flow-menu [class*="doup-"] span { color: #aaa; font-style: italic; }
+        .flow-menu [class*="doup-"] { line-height: 27px; vertical-align: middle; }
+        .flow-menu .doup-form { border: 1px solid #aaa; border-radius: 3px; padding: 1px 5px; }
+        .flow-menu .doup-form em { padding-right: 3px; }
+        .flow-menu .doup-form i  { border-left: 1px solid #aaa; font-size: 16px; }
+
+        .flow-menu { padding-bottom: 10px; margin-bottom: 0; box-shadow: none; -webkit-box-shadow: none; }
 
 
         .content-wrap { padding:15px; }
@@ -45,38 +88,83 @@
         .tpl-input:focus,
         .form-data-json,
         .form-data-json:focus,
+        .render-result,
+        .render-result:focus,
         .test-case-gene,
         .test-case-gene:focus { width:97%; padding:15px; min-height: 200px; color:#333; font-family: Consolas, Arial, "微软雅黑"; }
         pre { font-family: Consolas, Arial, "微软雅黑"; font-size: 11px; }
+
+        .render-result { height: 500px; }
 
     </style>
 
 </head>
 <body>
-    <div class="page-title">
-        <h1 class="main-title">Mustache-shell Demo</h1>
-        <h2 class="sub-title">[ <em>Template</em> + <del>JSON</del> <em>Form</em> = <em>HTML</em> ]</h2>
-        
-        <div class="control-box">
-            <span class="extra-info-control" id="J-extra-info-control">
-                <i class="ch-icon-info-sign"></i>Toggle extra info
-            </span>
 
-            <span class="key-demo-helper">
-                View some key demos: 
-                <select id="J-key-demo-select">
-                </select>
-            </span>
+    <div class="page-title">
+        <div class="navi-bar" id="J-navi-bar">
+
+            <h1 class="main-title">
+                <span class="logo"></span>
+                Mustache-shell
+            </h1>
+
+            <h2 class="sub-title">
+
+                <label class="anchor-label" id="J-anchor-label" style="display:none;">Anchors:</label>
+
+                <a href="#anchor-template" class="doup-tmpl J-anchor-links">
+                    <i>{{</i><em>Template</em><i>}}</i>
+                </a>
+                +
+                <a href="#anchor-form" class="doup-form J-anchor-links">
+                    <em>Form</em><i>|</i>
+                </a>
+            
+                <a href="#anchor-json" class="doup-json J-anchor-links" id="J-anchor-json" style="display:none;">
+                    <i>{"</i><em>JSON</em><i>"}</i>
+                </a>
+                =
+                <a href="#anchor-html" class="doup-html J-anchor-links">
+                    <i>&lt;</i><em>HTML</em><i>&#x2F;&gt;</i>
+                </a>
+
+            </h2>
+            
+            <div class="control-box">
+    <!--             
+                <span class="extra-info-control" id="J-extra-info-control">
+                    <i class="ch-icon-info-sign"></i>Toggle extra info
+                </span>
+     -->
+                <span class="key-demo-helper" style="display:none;">
+                    Demo:
+                    <select id="J-key-demo-select">
+                    </select>
+                </span>
+            </div>       
+
         </div>
+
+
     </div>
 
+
     <ul class="flow-menu ch-menu" role="navigation">
-        <li class="ch-expando">
-            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Mustache Template Code Input</h2>
+        <li class="ch-expando" id="anchor-template">
+            <h2 class="ch-expando-trigger ch-user-no-select sub-title" role="presentation">
+                <i class="ch-icon-arrow-right icon-blue"></i>
+                
+                <span class="doup-tmpl">
+                    <i>{{</i><em>Template</em><i>}}</i>
+                </span>
+
+            </h2>
             <div class="content-wrap">
                 <textarea id="tpl-input" class="tpl-input"></textarea>
             </div>
         </li>
+
         <li class="ch-expando" style="display:none;">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Data JSON Info</h2>
             <div class="content-wrap">
@@ -101,28 +189,48 @@
                 </pre>
             </div>
         </li>
-        <li class="ch-expando">
-            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-arrow-down icon-blue"></i>Data Form</h2>
+
+        <li class="ch-expando" id="anchor-form">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation">
+                <i class="ch-icon-arrow-right icon-orange"></i>
+
+                <span href="#" class="doup-form">
+                    <em>Form</em><i></i>
+                </span>
+
+            </h2>
             <div class="content-wrap">
-                <div class="data-form" id="data-form">
-                    
-                </div>
+                <div class="data-form" id="data-form"></div>
             </div>
         </li>
-        <li class="ch-expando" style="display:none;">
-            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Form Data JSON</h2>
+
+        <li class="ch-expando" id="anchor-json">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation">
+                <i class="ch-icon-info-sign icon-light-gray"></i>
+                
+                <span href="#" class="doup-json">
+                    <i>{"</i><em>JSON</em><i>"}</i> <span>of the form</span>
+                </span>
+            </h2>
             <div class="content-wrap">
                 <textarea id="form-data-json" class="form-data-json"></textarea>
             </div>
         </li>
-        <li class="ch-expando">
-            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-ok icon-green"></i>Render Result:</h2>
+
+        <li class="ch-expando" id="anchor-html">
+            <h2 class="ch-expando-trigger ch-user-no-select" role="presentation">
+                <i class="ch-icon-ok icon-green"></i>
+
+                <span href="#" class="doup-html">
+                    <i>&lt;</i><em>HTML</em><i>&#x2F;&gt;</i>
+                </span>
+            
+            </h2>
             <div class="content-wrap">
-                <div class="render-result" id="render-result">
-                    
-                </div>
+                <textarea id="render-result" class="render-result"></textarea>
             </div>
         </li>
+
         <!-- <li class="ch-expando">
             <h2 class="ch-expando-trigger ch-user-no-select" role="presentation"><i class="ch-icon-info-sign icon-light-gray"></i>Generate Case Data:</h2>
             <div class="content-wrap">
@@ -133,9 +241,65 @@
 
 
     <script type="text/javascript">
-        // UI init
-        $(".ch-menu").menu().select(1).select(5).select(7);
 
+        /* UI init */
+        // Folder
+        $('.ch-menu').menu();//.select(1);//.select(5).select(7);
+        // Float Anchor
+        (function(){
+            var naviBar = $('#J-navi-bar'),
+                anchorTip = $('#J-anchor-label'),
+                jsonAnchor = $('#J-anchor-json'),
+                anchorLinks = naviBar.find('.J-anchor-links'),
+                defOt = naviBar.offset().top,
+                win = $(window),
+                anchorTipShowed = false,
+                triggerAnchorOffset = 200,
+                anchorOffset = 70;
+
+            function showAnchorTip(){
+                anchorTip.show();
+                jsonAnchor.show();
+            }
+
+            function hideAnchorTip(){
+                anchorTip.hide();
+                jsonAnchor.hide();
+            }
+
+            function scrollFn(){
+                var st = win.scrollTop();
+                if ( st >= defOt ) {
+                    naviBar.css({ top: st-defOt });
+                }
+                else {
+                    if ( naviBar.css('top') != '0px' ){
+                        naviBar.css({ top: 0 });
+                    }
+                }
+                if ( st > triggerAnchorOffset && !anchorTipShowed ){
+                    anchorTipShowed = true;
+                    showAnchorTip();
+                }
+                else if ( st < triggerAnchorOffset && anchorTipShowed ){
+                    anchorTipShowed = false;
+                    hideAnchorTip();
+                }
+            }
+
+            win.scroll(scrollFn);
+            scrollFn();
+
+            anchorLinks.click(function( e ){
+                var tar = $(this.hash);
+                if ( tar.length ) {
+                    $('html,body').animate({
+                        scrollTop : tar.offset().top - anchorOffset
+                    });
+                }
+                e.preventDefault();
+            });
+        })();
 
         (function(){
 
@@ -199,7 +363,7 @@
                 formData,
 
                 // render result container
-                renderResBox  = $('#render-result'),
+                renderResArea  = $('#render-result'),
 
                 // case
                 caseDataArea  = $('#test-case-gene'),
@@ -332,10 +496,10 @@
                     );
 
                     // Update form data json print
-                    formData = editorArea.exportData();
-                    formDataArea.val(
-                        beautifyJs( JSON.stringify( formData ) )
-                    );
+                    //formData = editorArea.exportData();
+                    //formDataArea.val(
+                    //    beautifyJs( JSON.stringify( formData ) )
+                    //);
 
                 });
 
@@ -365,7 +529,7 @@
                     events['Editor Form Data Change']
                 ].join(' '), function(){
                     // Rerender HTML
-                    renderResBox.html(
+                    renderResArea.val(
                         mustComb.render( muTplStr, formData )
                     );
                 });
@@ -402,51 +566,37 @@
             });
             
 
-            // Init key demo helper
-            var keyDemoList = [
-                    {
-                        name : 'Hello world',
-                        muTplStr : 'Alexorz is a {{role}}.',
-                        formData : { role : 'Coder' }
-                    },
-                    {
-                        name : 'Array',
-                        muTplStr : '{{!meta=[ type:"array" ]}}\n{{#words}}\n  {{someone}} is a {{role}}.<br />\n{{/words}}',
-                        formData : { words : [ { someone : 'Alexorz', role: 'Coder' }, { someone : 'Jackie', role: 'Actor' } ] }
-                    },
-                    {
-                        name : 'Object',
-                        muTplStr : '{{!meta=[ type:"object" ]}}\n{{#word}}\n  {{someone}} is a {{role}}.\n{{/word}}',
-                        formData : { word : { someone : 'Alexorz', role: 'Coder' } }
-                    },
-                    {
-                        name : 'Name',
-                        muTplStr : '{{!meta=[ name:"What kind of people" ]}}\nAlexorz is a {{role}}.',
-                        formData : { role : 'Coder' }
-                    }
 
-                ],
-                keyDemoSelect = $('#J-key-demo-select');
+            // Init key demo helper            
+            seajs.use('key-demo-list.js', function( keyDemoList ){
 
-            for (var i = 0; i < keyDemoList.length; i++) {
-                var curr = keyDemoList[i];
-                keyDemoSelect.append('<option value="'+ i +'">'+ curr.name +'</option>');
-            }
+                var keyDemoSelect = $('#J-key-demo-select');
+                var keyDemoSelectWrapper = keyDemoSelect.parent();
 
-            keyDemoSelect.change(function(){
-                importData( keyDemoList[ Number(this.value) || 0 ] );
+                for (var i = 0; i < keyDemoList.length; i++) {
+                    var curr = keyDemoList[i];
+                    keyDemoSelect.append('<option value="'+ i +'">'+ curr.name +'</option>');
+                }
+
+                keyDemoSelect.change(function(){
+                    importData( keyDemoList[ Number(this.value) || 0 ] );
+                });
+
+                keyDemoSelectWrapper.fadeIn();
+
             });
 
 
-            // Toggle extra info
-            $('#J-extra-info-control').click(function(){
-                $(this).toggleClass('show-extra-info');
-                dataInfoBox.parents('.ch-expando').toggle();
-                demoDataBox.parents('.ch-expando').toggle();
-                formStructBox.parents('.ch-expando').toggle();
+            // // Toggle extra info
+            // $('#J-extra-info-control').click(function(){
+            //     $(this).toggleClass('show-extra-info');
+            //     dataInfoBox.parents('.ch-expando').toggle();
+            //     demoDataBox.parents('.ch-expando').toggle();
+            //     formStructBox.parents('.ch-expando').toggle();
+            //     formDataArea.parents('.ch-expando').toggle();
+            //     return false;
+            // });
 
-                return false;
-            });
 
         })();
 
