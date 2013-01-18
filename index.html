@@ -242,66 +242,67 @@
 
     <script type="text/javascript">
 
-        /* UI init */
-        // Folder
-        $('.ch-menu').menu();//.select(1);//.select(5).select(7);
-        // Float Anchor
+
         (function(){
-            var naviBar = $('#J-navi-bar'),
-                anchorTip = $('#J-anchor-label'),
-                jsonAnchor = $('#J-anchor-json'),
-                anchorLinks = naviBar.find('.J-anchor-links'),
-                defOt = naviBar.offset().top,
-                win = $(window),
-                anchorTipShowed = false,
-                triggerAnchorOffset = 200,
-                anchorOffset = 70;
+            /* UI init */
+            // Folder
+            var chMenu = $('.ch-menu').menu();//.select(1);//.select(5).select(7);
+            // Float Anchor
+            (function(){
+                var naviBar = $('#J-navi-bar'),
+                    anchorTip = $('#J-anchor-label'),
+                    jsonAnchor = $('#J-anchor-json'),
+                    anchorLinks = naviBar.find('.J-anchor-links'),
+                    defOt = naviBar.offset().top,
+                    win = $(window),
+                    anchorTipShowed = false,
+                    triggerAnchorOffset = 200,
+                    anchorOffset = 70;
 
-            function showAnchorTip(){
-                anchorTip.show();
-                jsonAnchor.show();
-            }
-
-            function hideAnchorTip(){
-                anchorTip.hide();
-                jsonAnchor.hide();
-            }
-
-            function scrollFn(){
-                var st = win.scrollTop();
-                if ( st >= defOt ) {
-                    naviBar.css({ top: st-defOt });
+                function showAnchorTip(){
+                    anchorTip.show();
+                    jsonAnchor.show();
                 }
-                else {
-                    if ( naviBar.css('top') != '0px' ){
-                        naviBar.css({ top: 0 });
+
+                function hideAnchorTip(){
+                    anchorTip.hide();
+                    jsonAnchor.hide();
+                }
+
+                function scrollFn(){
+                    var st = win.scrollTop();
+                    if ( st >= defOt ) {
+                        naviBar.css({ top: st-defOt });
+                    }
+                    else {
+                        if ( naviBar.css('top') != '0px' ){
+                            naviBar.css({ top: 0 });
+                        }
+                    }
+                    if ( st > triggerAnchorOffset && !anchorTipShowed ){
+                        anchorTipShowed = true;
+                        showAnchorTip();
+                    }
+                    else if ( st < triggerAnchorOffset && anchorTipShowed ){
+                        anchorTipShowed = false;
+                        hideAnchorTip();
                     }
                 }
-                if ( st > triggerAnchorOffset && !anchorTipShowed ){
-                    anchorTipShowed = true;
-                    showAnchorTip();
-                }
-                else if ( st < triggerAnchorOffset && anchorTipShowed ){
-                    anchorTipShowed = false;
-                    hideAnchorTip();
-                }
-            }
 
-            win.scroll(scrollFn);
-            scrollFn();
+                win.scroll(scrollFn);
+                scrollFn();
 
-            anchorLinks.click(function( e ){
-                var tar = $(this.hash);
-                if ( tar.length ) {
-                    $('html,body').animate({
-                        scrollTop : tar.offset().top - anchorOffset
-                    });
-                }
-                e.preventDefault();
-            });
-        })();
+                anchorLinks.click(function( e ){
+                    var tar = $(this.hash);
+                    if ( tar.length ) {
+                        $('html,body').animate({
+                            scrollTop : tar.offset().top - anchorOffset
+                        });
+                    }
+                    e.preventDefault();
+                });
+            })();
 
-        (function(){
 
             var ooxx = '=_-+',
 
@@ -530,48 +531,42 @@
                 ].join(' '), function(){
                     // Rerender HTML
                     renderResArea.val(
-                        mustComb.render( muTplStr, formData )
+                        mustComb.render( muTplStr, formData || {} )
                     );
                 });
 
-                // Init Local Cache
-                if ( activeStorage ) {
+            // Init Local Cache
+            if ( activeStorage ) {
 
-                    // Refresh Cache with Local Cache
-                    try{
-                        localCache = JSON.parse( localStorage.getItem( localStoreKey ) || '{}' );
-                    }catch( e ) {
-                        localCache = {};
-                    }
-                    muTplStr = localCache.muTplStr;
-                    formData = localCache.formData;
-
-                    // Cache custom input
-                    Event.bind( [
-                        events['Mustache Template String Change'],
-                        events['Editor Form Data Change']
-                    ].join(' '), function( e, args ){
-                        if ( args.triggeredBy != 'Import Data' ) {
-                            localCache.muTplStr = muTplStr;
-                            localCache.formData = formData;
-                            localStorage.setItem( localStoreKey, JSON.stringify( localCache ) );
-                        }
-                    });
+                // Refresh Cache with Local Cache
+                try{
+                    localCache = JSON.parse( localStorage.getItem( localStoreKey ) || '{}' );
+                }catch( e ) {
+                    localCache = {};
                 }
+                muTplStr = localCache.muTplStr;
+                formData = localCache.formData;
 
-            // Import defaut data
-            importData({
-                muTplStr : muTplStr || 'Alexorz is a {{role}}.',
-                formData : formData || { role : 'Coder' }
-            });
-            
-
+                // Cache custom input
+                Event.bind( [
+                    events['Mustache Template String Change'],
+                    events['Editor Form Data Change']
+                ].join(' '), function( e, args ){
+                    if ( args.triggeredBy != 'Import Data' ) {
+                        localCache.muTplStr = muTplStr;
+                        localCache.formData = formData;
+                        localStorage.setItem( localStoreKey, JSON.stringify( localCache ) );
+                    }
+                });
+            }
 
             // Init key demo helper            
             seajs.use('key-demo-list.js', function( keyDemoList ){
 
                 var keyDemoSelect = $('#J-key-demo-select');
                 var keyDemoSelectWrapper = keyDemoSelect.parent();
+                var menuFolders = $('.ch-expando-trigger');
+                var tarFolderList = [ 1,5,7 ];
 
                 for (var i = 0; i < keyDemoList.length; i++) {
                     var curr = keyDemoList[i];
@@ -580,8 +575,22 @@
 
                 keyDemoSelect.change(function(){
                     importData( keyDemoList[ Number(this.value) || 0 ] );
+                    
+                    for (var i = tarFolderList.length - 1; i >= 0; i--) {
+                        var index = tarFolderList[i];
+                        if ( !menuFolders.eq( index-1 ).hasClass('ch-expando-trigger-on') ) {
+                            chMenu.select( index );
+                        }
+                    };
                 });
 
+                // Import defaut data
+                importData({
+                    muTplStr : muTplStr || keyDemoList[0].muTplStr,
+                    formData : formData || keyDemoList[0].formData
+                });
+
+                // Show selector
                 keyDemoSelectWrapper.fadeIn();
 
             });

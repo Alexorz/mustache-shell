@@ -265,6 +265,7 @@ var Mustache;
           var tmp = value[i];
           tmp['_index_']  = i;
           tmp['_nIndex_'] = i+1;
+          tmp['_length_'] = len;
           buffer += callback(context.push(tmp), this);
         }
 

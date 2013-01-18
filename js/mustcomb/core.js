@@ -20,8 +20,24 @@ var mustComb = (function( exports ){
     			eval( 'view["'+ key +'"]='+ extraMap[ key ]);
     		}
     	}
+
+        // Extra Funcs
+        if ( typeof view == 'object' ) {
+            view._isFirst_ = view._isFirst_ || function(){
+                return this._index_ == 0;
+            };
+
+            view._isLast_ = view._isLast_ || function(){
+                return this._nIndex_ == this._length_;
+            };
+        }
         
-    	return this._Mustache.render( template, view, partials );
+    	return this._Mustache.render( this.parseComments( template ), view, partials );
+    };
+
+    exports.parseComments = function( tmpl ){
+        return typeof tmpl != 'string' ? tmpl : tmpl.replace(/<!--\s*#\s*Mustache-IGNORE\s*-->([\s\S]*?)<!--\s*\/\s*Mustache-IGNORE\s*-->/gm,'<!-- # Mustache-IGNORE {{=<% %>=}} -->$1<!-- / Mustache-IGNORE <%={{ }}=%> -->')
+                                                    .replace(/\/\*\s*#\s*Mustache-IGNORE\s*\*\/([\s\S]*?)\/\*\s*\/\s*Mustache-IGNORE\s*\*\//gm,'/* # Mustache-IGNORE {{=<% %>=}} */$1/* / Mustache-IGNORE <%={{ }}=%> */');
     };
 
     return exports;

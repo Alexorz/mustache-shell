@@ -9,6 +9,8 @@
             tplStruct,
             formStruct;
 
+        tplStr = this.parseComments( tplStr );
+
         // 优先从缓存获取
         cachItem = this.cache[ tplStr ];
         if ( cachItem && cachItem.formStruct ) {
