@@ -22,7 +22,8 @@
 
     <style type="text/css">
 
-        body { padding-bottom: 200px; }
+        body { padding-bottom: 200px; max-width: none; min-width: none; }
+        .section { min-width: 760px; max-width: 1200px; margin: 0 auto; }
 
         @-webkit-keyframes focuserFadeToggle {
             0%   { border-color: #fff; }
@@ -36,8 +37,8 @@
 
         .ch-expando-trigger:after { display: none; }
 
-        .page-title { position: relative; height: 50px; padding: 20px 0 15px 0; border-bottom:1px solid #ccc; }
-        .page-title   .navi-bar { position: relative; z-index: 10; width: 100%; overflow: hidden; padding: 12px 0; background: #fff; cursor: default; -webkit-box-shadow: white 0px 6px 20px 0px; box-shadow: white 0px 6px 20px 0px; }
+        .page-title { position: relative; z-index: 10; width: 100%; min-width: 760px; max-width: 1200px; height: 85px; border-bottom:1px solid #ccc; }
+        .page-title   .navi-bar { position: fixed; width: 100%; overflow: hidden; padding: 12px 0; background: #fff; cursor: default; padding: 20px 0 15px 0; -webkit-box-shadow: white 0px 6px 20px 0px; box-shadow: white 0px 6px 20px 0px; }
         .page-title     .main-title { display: block; float: left; height: 35px; margin: 0;          padding: 0 0 0 0; font-size:38px; line-height: 38px; vertical-align: middle; }
         .page-title     .sub-title  { display: block; float: left; height: 25px; margin: 0 0 0 50px; padding: 10px 0 0 0; font-size:18px; color: #aaa; line-height: 23px; }
         .page-title       .sub-title a  { display: inline-block; height: 23px; margin: 0 5px; border: 1px solid #fff; }
@@ -64,7 +65,7 @@
         .icon-green      { color: #A4C639; }
         .icon-light-gray { color: #ddd;    }
 
-        .flow-menu { max-width:none; margin-bottom:20px; }
+        .flow-menu { margin-bottom:20px; }
         .flow-menu .ch-expando-trigger [class*="icon-"],
         .flow-menu .ch-expando-trigger [class*="icon-"]:before { display: inline-block; margin-right: 0; width: 27px; height: 27px; text-align: center; line-height: 1.2em; }
         .flow-menu .ch-expando-trigger-on .icon-blue,
@@ -101,8 +102,8 @@
 </head>
 <body>
 
-    <div class="page-title">
-        <div class="navi-bar" id="J-navi-bar">
+    <div class="page-title section">
+        <div class="navi-bar section" id="J-navi-bar">
 
             <h1 class="main-title">
                 <span class="logo"></span>
@@ -150,7 +151,7 @@
     </div>
 
 
-    <ul class="flow-menu ch-menu" role="navigation">
+    <ul class="flow-menu ch-menu section" role="navigation">
         <li class="ch-expando" id="anchor-template">
             <h2 class="ch-expando-trigger ch-user-no-select sub-title" role="presentation">
                 <i class="ch-icon-arrow-right icon-blue"></i>
@@ -271,14 +272,6 @@
 
                 function scrollFn(){
                     var st = win.scrollTop();
-                    if ( st >= defOt ) {
-                        naviBar.css({ top: st-defOt });
-                    }
-                    else {
-                        if ( naviBar.css('top') != '0px' ){
-                            naviBar.css({ top: 0 });
-                        }
-                    }
                     if ( st > triggerAnchorOffset && !anchorTipShowed ){
                         anchorTipShowed = true;
                         showAnchorTip();
