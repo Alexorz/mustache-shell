@@ -84,7 +84,13 @@
     exports.buildEditorArea = function( tplStr, container ){
 
         var formStruct = this.getFormStruct( tplStr );
-        formStructMap[$(container)[0]] = formStruct;
+        var $container = $(container);
+        var builded = $container.data('editor-area-builded');
+
+        if ( !builded ) {
+            $container.data('editor-area-builded', true);
+        }
+        formStructMap[ $container[0][ $.expando ] ] = formStruct;
 
         $(container).empty().html(
             _buildEditorDOM( formStruct, true )
@@ -536,15 +542,16 @@
     var _addArrayItemDom = function(){
         var $this = $(this);
 
-        var formStruct = formStructMap[ $(this).parents('.editor-ui-node').eq(-1).parent()[0] ];
+        var formStruct = formStructMap[ $this.parents('.editor-ui-node').eq(-1).parent()[0][ $.expando ]  ];
 
         var keyStack = [];
         var typeStack = [];
         var indexStack = [];
-        var parentArrayNode = $(this).parents('.editor-ui-array').eq(0);
+        var stack = [];
+        var parentArrayNode = $this.parents('.editor-ui-array').eq(0);
         var inserter;
 
-        inserter = $(this).parents('.editor-ui-add-item').eq(0);
+        inserter = $this.parents('.editor-ui-add-item').eq(0);
 
         if ( inserter.length == 0 ) {
             inserter = this;
@@ -552,31 +559,53 @@
 
         typeStack.unshift('array');
         indexStack.unshift( parentArrayNode.attr('data-index') );
+        stack.unshift({
+            type  : 'array',
+            index : parentArrayNode.attr('data-index'),
+            key   : parentArrayNode.attr('data-key'),
+            node  : parentArrayNode[0]
+        });
 
         $(this).parents().each(function(){
-            var $this = $(this);
-            var key  = $this.attr('data-key');
-            var type = $this.attr('data-type');
-            var index = $this.attr('data-index');
+            var $this = $(this), key, type, index;
+            //editor-ui-array
+
             if ( $this.hasClass('editor-ui-node') ) {
+                key  = $this.attr('data-key');
+                type = $this.attr('data-type');
+                index = $this.attr('data-index');
+                var stackItem = {
+                    type  : type,
+                    index : index,
+                    key   : key,
+                    node  : this
+                };
+                if ( stackItem.type == 'array' ) {
+                    stackItem.index = $this.parents('.editor-ui-array').eq(0).attr('data-index');
+                }
+                stack.unshift(stackItem);
+                
                 if ( key ) {
                     typeStack.unshift(type);
                     indexStack.unshift(index);
                 }
             }
         });
+        stack.shift();
+
         var currNode = formStruct;
-        var tmp;
         if ( currNode ) {
             for (var i = 0; i < typeStack.length; i++) {
-                tmp = currNode[ {
+                currNode = currNode[ {
                     'prop'   : 'subProp',
                     'object' : 'subObject',
                     'array'  : 'subArray'
-                }[ typeStack[i]] ];
-                currNode = tmp[ indexStack[i] ] ? tmp[ indexStack[i] ] : tmp[0];
-            };
-            
+                }[ stack[i].type ] ];
+
+                if ( $.type( currNode ) == 'array' ) {
+                    currNode = currNode[ Number(stack[i].index) || 0 ];
+                }
+            }
             $( _buildArrayItemDOM( currNode ) ).insertBefore( inserter );
         }
 
